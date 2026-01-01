@@ -2,184 +2,152 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import { Brain, Users, Target, Lightbulb, Award, Zap } from 'lucide-react';
-import teamImage from '@/assets/team-about.jpg';
+import { Brain, Users, Target, Lightbulb, Award, Zap, ArrowRight, Sparkles } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ScrollReveal } from '@/components/ScrollReveal';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export const About = () => {
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+
+  const values = [
+    { title: "Community First", desc: "Prioritizing the needs of students, faculty, and staff in every line of code.", icon: Users, color: "text-blue-400" },
+    { title: "Innovation", desc: "Pushing AI boundaries to deliver cutting-edge academic solutions.", icon: Lightbulb, color: "text-amber-400" },
+    { title: "Accessibility", desc: "Ensuring our platform is usable by everyone, regardless of background.", icon: Target, color: "text-emerald-400" },
+    { title: "Excellence", desc: "Maintaining the highest standards of quality and academic integrity.", icon: Award, color: "text-purple-400" },
+    { title: "Efficiency", desc: "Streamlining campus processes to save time for what matters most.", icon: Zap, color: "text-rose-400" },
+    { title: "Intelligence", desc: "Leveraging AI responsibly to augment student and faculty capabilities.", icon: Brain, color: "text-cyan-400" },
+  ];
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black text-white selection:bg-primary/30">
       <Navigation />
-      
-      {/* Hero Section */}
-      <section className="py-24 bg-gradient-primary">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
-            About Campus_Sathi
-          </h1>
-          <p className="text-xl text-white/90 mb-8 animate-fade-in">
-            Revolutionizing campus communication through intelligent AI assistance and seamless document analysis
-          </p>
-        </div>
+
+      {/* Cinematic Hero Section */}
+      <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden px-6">
+        <div className="absolute inset-0 mask-radial opacity-30 bg-primary/20 pointer-events-none" />
+
+        <ScrollReveal>
+          <div className="text-center relative z-10">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
+            >
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-white/60">Our Identity</span>
+            </motion.div>
+
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-8 leading-[0.85]">
+              CRAFTING<br />
+              <span className="text-primary italic">INTELLIGENCE</span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-white/40 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+              Beyond software, we are building the neural foundation for the modern academic ecosystem.
+            </p>
+          </div>
+        </ScrollReveal>
+
+        <motion.div
+          style={{ y: y1 }}
+          className="absolute -bottom-20 left-0 right-0 text-[20vw] font-black text-white/[0.02] select-none pointer-events-none whitespace-nowrap z-0"
+        >
+          CAMPUS SATHI • CAMPUS SATHI • CAMPUS SATHI
+        </motion.div>
       </section>
 
-      {/* Mission Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <Badge variant="secondary" className="mb-4 text-sm">Our Mission</Badge>
-              <h2 className="text-4xl font-bold text-foreground mb-6">
-                Empowering Campus Communities Through AI Innovation
-              </h2>
-              <p className="text-lg text-muted-foreground mb-6">
-                Campus_Sathi was born from the vision of creating a more connected, efficient, and intelligent campus environment. We believe that every student and faculty member deserves instant access to information and support.
-              </p>
-              <p className="text-lg text-muted-foreground">
-                Our AI-powered platform bridges the gap between complex institutional knowledge and user-friendly accessibility, making campus life smoother for everyone.
-              </p>
-            </div>
-            <div className="relative animate-fade-in">
-              <img src={teamImage} alt="Campus Team" className="rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent rounded-2xl flex items-end p-8">
-                <div>
-                  <Brain className="h-12 w-12 text-white mb-4 animate-float" />
-                  <h3 className="text-2xl font-bold text-white mb-2">Smart Campus Assistant</h3>
-                  <p className="text-white/90">
-                    Leveraging advanced AI to understand, analyze, and respond to complex campus queries with human-like intelligence.
+      {/* Narrative Section */}
+      <section className="py-32 px-6 border-y border-white/5 bg-slate-950/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-24 items-center">
+            <ScrollReveal direction="left">
+              <div>
+                <span className="text-primary font-black uppercase tracking-widest text-sm mb-6 block italic">The Genesis</span>
+                <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-tight">
+                  Bridging the Gap<br />
+                  <span className="text-white/40">Between Info & Access.</span>
+                </h2>
+                <div className="space-y-6 text-xl text-white/50 leading-relaxed font-light">
+                  <p>
+                    Campus_Sathi emerged from a simple question: Why is academic information still siloed in PDFs and static portals?
+                  </p>
+                  <p>
+                    We envisioned a world where every document speaks, every circular is contextually aware, and every student has a 24/7 intellectual companion.
                   </p>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
+
+            <ScrollReveal direction="right">
+              <div className="relative aspect-square">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-transparent rounded-3xl" />
+                <div className="w-full h-full rounded-3xl border border-white/10 bg-white/5 backdrop-blur-3xl p-12 flex flex-col justify-center items-center text-center group transition-all duration-700 hover:border-primary/50">
+                  <div className="bg-primary/20 p-8 rounded-full mb-8 group-hover:scale-110 transition-transform duration-700">
+                    <Brain className="h-16 w-16 text-primary" />
+                  </div>
+                  <h3 className="text-3xl font-black mb-4">Neural Architecture</h3>
+                  <p className="text-white/40 text-lg">Built on proprietary LLM integration and semantic document processing.</p>
+                </div>
+              </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>
 
       {/* Values Section */}
-      <section className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Our Core Values</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              The principles that drive everything we do at Campus_Sathi
-            </p>
+      <section className="py-32 px-6 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+            <ScrollReveal direction="up" delay={0.2}>
+              <div>
+                <span className="text-primary font-black uppercase tracking-widest text-sm mb-6 block italic">Our DNA</span>
+                <h2 className="text-5xl md:text-7xl font-black tracking-tighter">Core Principles.</h2>
+              </div>
+            </ScrollReveal>
+            <ScrollReveal direction="up" delay={0.4}>
+              <p className="text-xl text-white/40 max-w-md font-light">
+                The six foundational pillars guiding our journey towards a smarter campus.
+              </p>
+            </ScrollReveal>
           </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="group hover-scale backdrop-blur-sm bg-card border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-primary p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <Users className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle>Community First</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  We prioritize the needs of students, faculty, and staff, building solutions that truly serve the campus community.
-                </p>
-              </CardContent>
-            </Card>
 
-            <Card className="group hover-scale backdrop-blur-sm bg-card border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-secondary p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <Lightbulb className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle>Innovation</CardTitle>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {values.map((v, i) => (
+              <ScrollReveal key={i} delay={i * 0.1}>
+                <div className="group h-full p-10 rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.05] hover:border-white/20">
+                  <v.icon className={`h-10 w-10 mb-8 transition-transform duration-500 group-hover:scale-110 ${v.color}`} />
+                  <h3 className="text-2xl font-black mb-4">{v.title}</h3>
+                  <p className="text-white/40 font-light leading-relaxed">{v.desc}</p>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Constantly pushing the boundaries of what's possible with AI and machine learning to deliver cutting-edge solutions.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover-scale backdrop-blur-sm bg-card border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-primary to-secondary p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <Target className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle>Accessibility</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Ensuring our platform is usable by everyone, regardless of technical expertise, language, or accessibility needs.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover-scale backdrop-blur-sm bg-card border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-secondary to-accent p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <Award className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle>Excellence</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Maintaining the highest standards of quality, reliability, and performance in everything we deliver.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover-scale backdrop-blur-sm bg-card border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-accent to-primary p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <Zap className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle>Efficiency</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Streamlining campus processes and eliminating friction to save time for students and faculty.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover-scale backdrop-blur-sm bg-card border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-primary to-accent p-3 rounded-lg group-hover:scale-110 transition-transform duration-300">
-                    <Brain className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle>Intelligence</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Leveraging artificial intelligence responsibly to augment human capabilities, not replace them.
-                </p>
-              </CardContent>
-            </Card>
+              </ScrollReveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-bold text-foreground mb-6">
-            Built by Educators, for Educators
-          </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            Our team combines deep educational expertise with cutting-edge technology to create solutions that truly understand campus needs.
-          </p>
-          <div className="bg-gradient-primary rounded-2xl p-8 shadow-elegant">
-            <h3 className="text-2xl font-bold text-white mb-4">Join Our Mission</h3>
-            <p className="text-white/90">
-              Whether you're a student, educator, or administrator, Campus_Sathi is designed to make your campus experience more productive, engaging, and connected.
+      {/* Experience Section */}
+      <section className="py-48 px-6 bg-white text-black text-center relative overflow-hidden">
+        <ScrollReveal>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-black tracking-[calc(-0.06em)] mb-12 uppercase italic leading-[0.8]">
+              Ready to<br />
+              <span className="text-primary">Evolve.</span>
+            </h2>
+            <p className="text-xl md:text-2xl mb-16 font-light max-w-2xl mx-auto text-black/60">
+              Join the mission to transform documentation into conversation.
             </p>
+            <Link to="/login">
+              <Button size="lg" className="h-20 px-12 rounded-full bg-black text-white hover:bg-black/90 text-xl font-black uppercase tracking-widest group">
+                Initialize Portal
+                <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+              </Button>
+            </Link>
           </div>
-        </div>
+        </ScrollReveal>
       </section>
 
       <Footer />

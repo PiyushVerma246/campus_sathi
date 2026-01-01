@@ -1,262 +1,203 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageSquare, Shield, User, Zap, Globe, FileText, Users, BookOpen, ArrowRight, Brain, Clock, Lock } from 'lucide-react';
+import { MessageSquare, Shield, User, Zap, Globe, FileText, Users, BookOpen, ArrowRight, Brain, Clock, Lock, Sparkles, Cpu, Fingerprint } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
-import heroImage from '@/assets/hero-campus.jpg';
+import { HeroCanvas } from '@/components/HeroCanvas';
+import { ScrollReveal } from '@/components/ScrollReveal';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import aiAnalysisImage from '@/assets/ai-analysis.jpg';
 
 export const Home = () => {
+  const { scrollYProgress } = useScroll();
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, 200]);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#020617] text-white selection:bg-primary/30">
       <Navigation />
-      
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-primary py-32">
-        <div className="absolute inset-0 opacity-20">
-          <img src={heroImage} alt="Campus Hero" className="w-full h-full object-cover" />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="text-left">
-              <div className="flex items-center mb-8 animate-slide-in-left">
-                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full animate-float">
-                  <Brain className="h-16 w-16 text-white" />
-                </div>
-              </div>
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 animate-fade-in">
-                Campus_Sathi
-              </h1>
-              <div className="text-2xl md:text-3xl text-white/90 mb-4 animate-fade-in">
-                Your Intelligent Campus Assistant
-              </div>
-              <p className="text-lg text-white/80 mb-12 max-w-2xl animate-fade-in">
-                Revolutionizing campus communication with AI-powered document analysis, instant support, and intelligent query handling for students and faculty.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6 animate-fade-in">
-                <Link to="/login">
-                  <Button size="lg" variant="secondary" className="group px-8 py-4 text-lg hover-lift">
-                    Get Started Today
-                    <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-2 transition-all duration-300" />
-                  </Button>
-                </Link>
-                <Link to="/about">
-                  <Button size="lg" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 px-8 py-4 text-lg backdrop-blur-sm">
-                    Learn More
-                  </Button>
-                </Link>
-              </div>
+
+      {/* Immersive Hero Section */}
+      <section className="relative h-[100vh] flex items-center justify-center overflow-hidden border-b border-white/5">
+        <HeroCanvas />
+        <div className="absolute inset-0 bg-gradient-hero pointer-events-none"></div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
+              <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              <span className="text-xs font-semibold tracking-widest uppercase text-blue-300">Intelligent Campus Evolution</span>
             </div>
-            <div className="hidden lg:block animate-slide-in-right">
-              <img src={aiAnalysisImage} alt="AI Analysis" className="rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-500" />
-            </div>
-          </div>
-        </div>
-      </section>
+          </motion.div>
 
-      {/* Features Section */}
-      <section className="py-24 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Powerful Features for Modern Campus Life
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Campus_Sathi combines cutting-edge AI with intuitive design to deliver unparalleled campus support
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* AI-Powered Responses */}
-            <Card className="group hover-scale backdrop-blur-sm bg-card/95 border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-primary p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                    <Brain className="h-7 w-7 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">AI-Powered Intelligence</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base mb-4">
-                  Advanced natural language processing delivers instant, accurate responses to all your campus queries with contextual understanding.
-                </CardDescription>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <MessageSquare className="h-4 w-4 mr-2 text-primary" />
-                    Contextual Query Understanding
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 mr-2 text-primary" />
-                    24/7 Instant Responses
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 tracking-tighter gradient-text-premium leading-none"
+          >
+            Campus<span className="text-primary italic">_</span>Sathi
+          </motion.h1>
 
-            {/* Document Analysis */}
-            <Card className="group hover-scale backdrop-blur-sm bg-card/95 border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-secondary p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                    <FileText className="h-7 w-7 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">Smart Document Analysis</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base mb-4">
-                  Upload documents and get intelligent insights, summaries, and answers extracted from your academic materials instantly.
-                </CardDescription>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <BookOpen className="h-4 w-4 mr-2 text-primary" />
-                    Multi-format Support
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Zap className="h-4 w-4 mr-2 text-primary" />
-                    Instant Extraction
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
+          >
+            Transcending conventional communication with hyper-intelligent document analysis and contextual awareness for the modern academic era.
+          </motion.p>
 
-            {/* Admin Dashboard */}
-            <Card className="group hover-scale backdrop-blur-sm bg-card/95 border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-primary to-secondary p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                    <Shield className="h-7 w-7 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">Administrative Control</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base mb-4">
-                  Comprehensive admin dashboard for managing institutional content, monitoring interactions, and maintaining system integrity.
-                </CardDescription>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Users className="h-4 w-4 mr-2 text-primary" />
-                    User Management
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Lock className="h-4 w-4 mr-2 text-primary" />
-                    Secure Access Control
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Multilingual Support */}
-            <Card className="group hover-scale backdrop-blur-sm bg-card/95 border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-secondary to-accent p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                    <Globe className="h-7 w-7 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">Global Accessibility</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base mb-4">
-                  Built-in multilingual support ensures every student can interact in their preferred language with seamless translation.
-                </CardDescription>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Globe className="h-4 w-4 mr-2 text-primary" />
-                    50+ Languages Supported
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Zap className="h-4 w-4 mr-2 text-primary" />
-                    Real-time Translation
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* User Experience */}
-            <Card className="group hover-scale backdrop-blur-sm bg-card/95 border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-accent to-primary p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                    <User className="h-7 w-7 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">Personalized Experience</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base mb-4">
-                  Tailored user dashboards with personalized recommendations, chat history, and preference-based customizations.
-                </CardDescription>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <User className="h-4 w-4 mr-2 text-primary" />
-                    Custom Profiles
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4 mr-2 text-primary" />
-                    Chat History
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Performance */}
-            <Card className="group hover-scale backdrop-blur-sm bg-card/95 border shadow-elegant hover:shadow-glow transition-all duration-500">
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="bg-gradient-to-r from-primary to-accent p-3 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                    <Zap className="h-7 w-7 text-white" />
-                  </div>
-                  <CardTitle className="text-xl">Lightning Fast</CardTitle>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-base mb-4">
-                  Optimized performance ensures instant responses, seamless file uploads, and smooth user interactions across all devices.
-                </CardDescription>
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Zap className="h-4 w-4 mr-2 text-primary" />
-                    Sub-second Response Time
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Globe className="h-4 w-4 mr-2 text-primary" />
-                    Cross-platform Compatibility
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-24 bg-gradient-primary">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Transform Your Campus Experience Today
-          </h2>
-          <p className="text-xl text-white/90 mb-10">
-            Join thousands of students and faculty already using Campus_Sathi for smarter, faster campus interactions.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="flex flex-col sm:flex-row gap-6 justify-center"
+          >
             <Link to="/login">
-              <Button size="lg" variant="secondary" className="group px-10 py-4 text-lg">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-6 w-6 group-hover:translate-x-2 transition-all duration-300" />
+              <Button size="lg" className="h-16 px-10 rounded-full bg-white text-black hover:bg-white/90 transition-all group overflow-hidden relative font-bold text-lg">
+                <span className="relative z-10 flex items-center">
+                  Initialize Experience
+                  <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </span>
               </Button>
             </Link>
-            <Link to="/contact">
-              <Button size="lg" variant="outline" className="bg-white/10 text-white border-white/30 hover:bg-white/20 px-10 py-4 text-lg">
-                Contact Sales
+            <Link to="/about">
+              <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-white/10 hover:bg-white/5 backdrop-blur-sm transition-all text-lg font-medium">
+                Our Philosophy
               </Button>
             </Link>
+          </motion.div>
+        </div>
+
+        <motion.div
+          style={{ y: y1 }}
+          className="absolute bottom-20 left-10 md:left-20 text-[10vw] font-bold text-white/[0.01] select-none pointer-events-none whitespace-nowrap z-0"
+        >
+          INTELLIGENCE • INNOVATION • IMPACT
+        </motion.div>
+      </section>
+
+      {/* Feature Narrative Section */}
+      <section className="py-32 relative overflow-hidden bg-black/40">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-24 items-center">
+            <ScrollReveal direction="left">
+              <div className="relative">
+                <div className="absolute -inset-10 bg-primary/20 blur-[100px] opacity-20"></div>
+                <img
+                  src={aiAnalysisImage}
+                  alt="AI Core"
+                  className="rounded-3xl border border-white/10 shadow-3xl grayscale hover:grayscale-0 transition-all duration-1000"
+                />
+                <div className="absolute top-10 right-10 bg-black/60 backdrop-blur-xl border border-white/10 p-6 rounded-2xl animate-float">
+                  <Cpu className="h-10 w-10 text-primary mb-2" />
+                  <div className="text-xl font-bold">Neural Engine</div>
+                  <div className="text-sm text-white/50">Processing 10TB+ academic data</div>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <div className="space-y-12">
+              <ScrollReveal direction="right">
+                <h2 className="text-4xl md:text-5xl font-bold leading-tight">
+                  A New Paradigm in <br />
+                  <span className="text-primary tracking-widest uppercase text-sm font-black bg-white/10 px-4 py-1 rounded-full align-middle">Campus Intelligence</span>
+                </h2>
+              </ScrollReveal>
+
+              <div className="space-y-8">
+                {[
+                  { icon: Brain, title: "Cognitive Document Analysis", content: "Deep learning models extract insights from complex academic papers and institutional records instantly." },
+                  { icon: Fingerprint, title: "Contextual Awareness", content: "Understands your specific role and history to provide tailored, personalized responses." },
+                  { icon: Globe, title: "Universal Translation", content: "Smashes language barriers with real-time translation across 50+ strategic languages." }
+                ].map((feature, i) => (
+                  <ScrollReveal key={i} delay={i * 0.1}>
+                    <div className="flex items-start space-x-6 group">
+                      <div className="flex-shrink-0 bg-white/5 p-4 rounded-2xl group-hover:bg-primary/20 transition-colors border border-white/5">
+                        <feature.icon className="h-7 w-7 text-white group-hover:text-primary transition-colors" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-primary">{feature.title}</h3>
+                        <p className="text-white/50 leading-relaxed font-light">{feature.content}</p>
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
+      </section>
+
+      {/* "Crazy" Interaction Grid */}
+      <section className="py-32 relative bg-black/60">
+        <div className="max-w-7xl mx-auto px-6">
+          <ScrollReveal>
+            <div className="text-center mb-24">
+              <h2 className="text-5xl md:text-7xl font-bold mb-6 italic tracking-tighter">Multidimensional Core</h2>
+              <p className="max-w-xl mx-auto text-white/40 tracking-widest uppercase text-xs">Everything you need, amplified by intelligence</p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-1">
+            {[
+              { title: "24/7 Autonomy", subtitle: "Zero downtime infrastructure", icon: Clock },
+              { title: "Quantum Security", subtitle: "End-to-end encrypted logic", icon: Lock },
+              { title: "Massive scale", subtitle: "Built for global universities", icon: Users },
+              { title: "Unified API", subtitle: "Seamless data integration", icon: Zap },
+              { title: "Direct Access", subtitle: "Admin-level control panel", icon: Shield },
+              { title: "Smart Storage", subtitle: "Cloud-native file management", icon: BookOpen }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ scale: 0.98, backgroundColor: "rgba(255,255,255,0.03)" }}
+                className="p-12 border border-white/5 flex flex-col items-center text-center transition-all bg-white/[0.01]"
+              >
+                <item.icon className="h-10 w-10 text-white/20 mb-8 group-hover:text-primary" />
+                <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
+                <p className="text-white/30 text-sm tracking-wide uppercase font-semibold">{item.subtitle}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Massive CTA Section */}
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-white text-black">
+        <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
+        <div className="relative z-10 text-center px-6">
+          <ScrollReveal>
+            <h2 className="text-[12vw] font-black leading-none tracking-tighter mb-12 uppercase italic">Elevate.</h2>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.2}>
+            <p className="text-2xl md:text-3xl max-w-3xl mx-auto mb-16 font-serif italic text-black/60">
+              The future isn't just coming—it's being computed.
+            </p>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.4}>
+            <div className="flex justify-center">
+              <Link to="/login">
+                <Button size="lg" className="h-20 px-16 rounded-full bg-black text-white hover:bg-black/90 text-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-2xl">
+                  START NOW
+                </Button>
+              </Link>
+            </div>
+          </ScrollReveal>
+        </div>
+
+        <motion.div
+          style={{ y: y2 }}
+          className="absolute -bottom-20 right-0 text-[15vw] font-black text-black/[0.03] select-none pointer-events-none whitespace-nowrap uppercase italic"
+        >
+          ACADEMIC REVOLUTION
+        </motion.div>
       </section>
 
       <Footer />
