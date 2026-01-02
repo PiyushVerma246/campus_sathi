@@ -22,7 +22,7 @@ export const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary/30">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
       <Navigation />
 
       {/* Cinematic Hero Section */}
@@ -35,10 +35,10 @@ export const About = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1 }}
-              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8"
             >
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-xs font-black uppercase tracking-[0.2em] text-white/60">Our Identity</span>
+              <span className="text-xs font-black uppercase tracking-[0.2em] text-primary">Our Identity</span>
             </motion.div>
 
             <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-8 leading-[0.85]">
@@ -46,7 +46,7 @@ export const About = () => {
               <span className="text-primary italic">INTELLIGENCE</span>
             </h1>
 
-            <p className="text-xl md:text-2xl text-white/40 max-w-2xl mx-auto font-light leading-relaxed mb-12">
+            <p className="text-xl md:text-2xl text-foreground/40 max-w-2xl mx-auto font-light leading-relaxed mb-12">
               Beyond software, we are building the neural foundation for the modern academic ecosystem.
             </p>
           </div>
@@ -54,7 +54,7 @@ export const About = () => {
 
         <motion.div
           style={{ y: y1 }}
-          className="absolute -bottom-20 left-0 right-0 text-[20vw] font-black text-white/[0.02] select-none pointer-events-none whitespace-nowrap z-0"
+          className="absolute -bottom-20 left-0 right-0 text-[20vw] font-black text-foreground/[0.01] select-none pointer-events-none whitespace-nowrap z-0"
         >
           CAMPUS SATHI • CAMPUS SATHI • CAMPUS SATHI
         </motion.div>
@@ -69,9 +69,9 @@ export const About = () => {
                 <span className="text-primary font-black uppercase tracking-widest text-sm mb-6 block italic">The Genesis</span>
                 <h2 className="text-4xl md:text-6xl font-black tracking-tighter mb-10 leading-tight">
                   Bridging the Gap<br />
-                  <span className="text-white/40">Between Info & Access.</span>
+                  <span className="text-foreground/40">Between Info & Access.</span>
                 </h2>
-                <div className="space-y-6 text-xl text-white/50 leading-relaxed font-light">
+                <div className="space-y-6 text-xl text-foreground/50 leading-relaxed font-light">
                   <p>
                     Campus_Sathi emerged from a simple question: Why is academic information still siloed in PDFs and static portals?
                   </p>
@@ -85,12 +85,12 @@ export const About = () => {
             <ScrollReveal direction="right">
               <div className="relative aspect-square">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-transparent rounded-3xl" />
-                <div className="w-full h-full rounded-3xl border border-white/10 bg-white/5 backdrop-blur-3xl p-12 flex flex-col justify-center items-center text-center group transition-all duration-700 hover:border-primary/50">
+                <div className="w-full h-full rounded-3xl border border-foreground/10 bg-foreground/[0.02] backdrop-blur-3xl p-12 flex flex-col justify-center items-center text-center group transition-all duration-700 hover:border-primary/50">
                   <div className="bg-primary/20 p-8 rounded-full mb-8 group-hover:scale-110 transition-transform duration-700">
                     <Brain className="h-16 w-16 text-primary" />
                   </div>
                   <h3 className="text-3xl font-black mb-4">Neural Architecture</h3>
-                  <p className="text-white/40 text-lg">Built on proprietary LLM integration and semantic document processing.</p>
+                  <p className="text-foreground/40 text-lg">Built on proprietary LLM integration and semantic document processing.</p>
                 </div>
               </div>
             </ScrollReveal>
@@ -109,7 +109,7 @@ export const About = () => {
               </div>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={0.4}>
-              <p className="text-xl text-white/40 max-w-md font-light">
+              <p className="text-xl text-foreground/40 max-w-md font-light">
                 The six foundational pillars guiding our journey towards a smarter campus.
               </p>
             </ScrollReveal>
@@ -118,10 +118,10 @@ export const About = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {values.map((v, i) => (
               <ScrollReveal key={i} delay={i * 0.1}>
-                <div className="group h-full p-10 rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.05] hover:border-white/20">
+                <div className="group h-full p-10 rounded-3xl border border-foreground/5 bg-foreground/[0.02] backdrop-blur-sm transition-all duration-500 hover:bg-foreground/[0.05] hover:border-foreground/20">
                   <v.icon className={`h-10 w-10 mb-8 transition-transform duration-500 group-hover:scale-110 ${v.color}`} />
                   <h3 className="text-2xl font-black mb-4">{v.title}</h3>
-                  <p className="text-white/40 font-light leading-relaxed">{v.desc}</p>
+                  <p className="text-foreground/40 font-light leading-relaxed">{v.desc}</p>
                 </div>
               </ScrollReveal>
             ))}
@@ -130,24 +130,42 @@ export const About = () => {
       </section>
 
       {/* Experience Section */}
-      <section className="py-48 px-6 bg-white text-black text-center relative overflow-hidden">
-        <ScrollReveal>
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-6xl md:text-8xl lg:text-[10rem] font-black tracking-[calc(-0.06em)] mb-12 uppercase italic leading-[0.8]">
-              Ready to<br />
-              <span className="text-primary">Evolve.</span>
-            </h2>
-            <p className="text-xl md:text-2xl mb-16 font-light max-w-2xl mx-auto text-black/60">
-              Join the mission to transform documentation into conversation.
-            </p>
-            <Link to="/login">
-              <Button size="lg" className="h-20 px-12 rounded-full bg-black text-white hover:bg-black/90 text-xl font-black uppercase tracking-widest group">
-                Initialize Portal
-                <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-        </ScrollReveal>
+      <section className="py-32 md:py-48 px-6 bg-background border-t border-foreground/5 relative overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_20px_rgba(var(--primary),0.5)]" />
+
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
+          <ScrollReveal direction="left">
+            <div>
+              <h2 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-12 uppercase italic leading-[0.8]">
+                Ready to<br />
+                <span className="text-primary">Evolve.</span>
+              </h2>
+              <p className="text-xl md:text-2xl mb-16 font-light max-w-2xl text-foreground/40">
+                Join the mission to transform documentation into conversation. Initialize your neural gateway today.
+              </p>
+              <Link to="/login">
+                <Button size="lg" className="h-20 px-12 rounded-full bg-foreground text-background hover:bg-primary hover:text-white text-xl font-black uppercase tracking-widest group transition-all duration-500">
+                  Initialize Portal
+                  <ArrowRight className="ml-4 h-6 w-6 group-hover:translate-x-2 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal direction="right" delay={0.2}>
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-primary/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+              <img
+                src="/neural_viz.png"
+                alt="Neural Architecture"
+                className="w-full h-auto relative z-10 animate-float"
+              />
+            </div>
+          </ScrollReveal>
+        </div>
+
+        {/* Decorative elements */}
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
       </section>
 
       <Footer />

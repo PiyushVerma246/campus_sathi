@@ -14,7 +14,7 @@ export const Home = () => {
   const y2 = useTransform(scrollYProgress, [0, 1], [0, 200]);
 
   return (
-    <div className="min-h-screen bg-[#020617] text-white selection:bg-primary/30">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
       <Navigation />
 
       {/* Immersive Hero Section */}
@@ -28,9 +28,9 @@ export const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="inline-flex items-center space-x-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
+            <div className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-semibold tracking-widest uppercase text-blue-300">Intelligent Campus Evolution</span>
+              <span className="text-xs font-semibold tracking-widest uppercase text-primary">Intelligent Campus Evolution</span>
             </div>
           </motion.div>
 
@@ -47,7 +47,7 @@ export const Home = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.3 }}
-            className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
+            className="text-lg md:text-xl text-foreground/60 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
           >
             Transcending conventional communication with hyper-intelligent document analysis and contextual awareness for the modern academic era.
           </motion.p>
@@ -59,7 +59,7 @@ export const Home = () => {
             className="flex flex-col sm:flex-row gap-6 justify-center"
           >
             <Link to="/login">
-              <Button size="lg" className="h-16 px-10 rounded-full bg-white text-black hover:bg-white/90 transition-all group overflow-hidden relative font-bold text-lg">
+              <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all group overflow-hidden relative font-bold text-lg">
                 <span className="relative z-10 flex items-center">
                   Initialize Experience
                   <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
@@ -67,7 +67,7 @@ export const Home = () => {
               </Button>
             </Link>
             <Link to="/about">
-              <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-white/10 hover:bg-white/5 backdrop-blur-sm transition-all text-lg font-medium">
+              <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-foreground/10 hover:bg-foreground/5 backdrop-blur-sm transition-all text-lg font-medium">
                 Our Philosophy
               </Button>
             </Link>
@@ -76,14 +76,14 @@ export const Home = () => {
 
         <motion.div
           style={{ y: y1 }}
-          className="absolute bottom-20 left-10 md:left-20 text-[10vw] font-bold text-white/[0.01] select-none pointer-events-none whitespace-nowrap z-0"
+          className="absolute bottom-20 left-10 md:left-20 text-[10vw] font-bold text-foreground/[0.01] select-none pointer-events-none whitespace-nowrap z-0"
         >
           INTELLIGENCE • INNOVATION • IMPACT
         </motion.div>
       </section>
 
       {/* Feature Narrative Section */}
-      <section className="py-32 relative overflow-hidden bg-black/40">
+      <section className="py-32 relative overflow-hidden bg-foreground/[0.02]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-24 items-center">
             <ScrollReveal direction="left">
@@ -92,12 +92,12 @@ export const Home = () => {
                 <img
                   src={aiAnalysisImage}
                   alt="AI Core"
-                  className="rounded-3xl border border-white/10 shadow-3xl grayscale hover:grayscale-0 transition-all duration-1000"
+                  className="rounded-3xl border border-foreground/10 shadow-3xl grayscale hover:grayscale-0 transition-all duration-1000"
                 />
-                <div className="absolute top-10 right-10 bg-black/60 backdrop-blur-xl border border-white/10 p-6 rounded-2xl animate-float">
+                <div className="absolute top-10 right-10 bg-background/60 backdrop-blur-xl border border-foreground/10 p-6 rounded-2xl animate-float">
                   <Cpu className="h-10 w-10 text-primary mb-2" />
                   <div className="text-xl font-bold">Neural Engine</div>
-                  <div className="text-sm text-white/50">Processing 10TB+ academic data</div>
+                  <div className="text-sm text-foreground/50">Processing 10TB+ academic data</div>
                 </div>
               </div>
             </ScrollReveal>
@@ -106,7 +106,7 @@ export const Home = () => {
               <ScrollReveal direction="right">
                 <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                   A New Paradigm in <br />
-                  <span className="text-primary tracking-widest uppercase text-sm font-black bg-white/10 px-4 py-1 rounded-full align-middle">Campus Intelligence</span>
+                  <span className="text-primary tracking-widest uppercase text-sm font-black bg-primary/10 px-4 py-1 rounded-full align-middle">Campus Intelligence</span>
                 </h2>
               </ScrollReveal>
 
@@ -118,12 +118,12 @@ export const Home = () => {
                 ].map((feature, i) => (
                   <ScrollReveal key={i} delay={i * 0.1}>
                     <div className="flex items-start space-x-6 group">
-                      <div className="flex-shrink-0 bg-white/5 p-4 rounded-2xl group-hover:bg-primary/20 transition-colors border border-white/5">
-                        <feature.icon className="h-7 w-7 text-white group-hover:text-primary transition-colors" />
+                      <div className="flex-shrink-0 bg-background/5 p-4 rounded-2xl group-hover:bg-primary/20 transition-colors border border-foreground/5">
+                        <feature.icon className="h-7 w-7 text-foreground/70 group-hover:text-primary transition-colors" />
                       </div>
                       <div>
                         <h3 className="text-xl font-bold mb-2 transition-colors group-hover:text-primary">{feature.title}</h3>
-                        <p className="text-white/50 leading-relaxed font-light">{feature.content}</p>
+                        <p className="text-foreground/50 leading-relaxed font-light">{feature.content}</p>
                       </div>
                     </div>
                   </ScrollReveal>
@@ -135,16 +135,16 @@ export const Home = () => {
       </section>
 
       {/* "Crazy" Interaction Grid */}
-      <section className="py-32 relative bg-black/60">
+      <section className="py-32 relative bg-background">
         <div className="max-w-7xl mx-auto px-6">
           <ScrollReveal>
             <div className="text-center mb-24">
               <h2 className="text-5xl md:text-7xl font-bold mb-6 italic tracking-tighter">Multidimensional Core</h2>
-              <p className="max-w-xl mx-auto text-white/40 tracking-widest uppercase text-xs">Everything you need, amplified by intelligence</p>
+              <p className="max-w-xl mx-auto text-foreground/40 tracking-widest uppercase text-[10px] font-black">Everything you need, amplified by intelligence</p>
             </div>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-1">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { title: "24/7 Autonomy", subtitle: "Zero downtime infrastructure", icon: Clock },
               { title: "Quantum Security", subtitle: "End-to-end encrypted logic", icon: Lock },
@@ -155,12 +155,14 @@ export const Home = () => {
             ].map((item, i) => (
               <motion.div
                 key={i}
-                whileHover={{ scale: 0.98, backgroundColor: "rgba(255,255,255,0.03)" }}
-                className="p-12 border border-white/5 flex flex-col items-center text-center transition-all bg-white/[0.01]"
+                whileHover={{ y: -10, backgroundColor: "var(--primary-light)" }}
+                className="p-12 rounded-[2.5rem] border border-foreground/5 flex flex-col items-center text-center transition-all bg-foreground/[0.02]"
               >
-                <item.icon className="h-10 w-10 text-white/20 mb-8 group-hover:text-primary" />
+                <div className="p-6 rounded-3xl bg-background border border-foreground/5 mb-8 shadow-sm">
+                  <item.icon className="h-8 w-8 text-primary" />
+                </div>
                 <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
-                <p className="text-white/30 text-sm tracking-wide uppercase font-semibold">{item.subtitle}</p>
+                <p className="text-foreground/30 text-[10px] tracking-widest uppercase font-black">{item.subtitle}</p>
               </motion.div>
             ))}
           </div>
@@ -168,7 +170,7 @@ export const Home = () => {
       </section>
 
       {/* Massive CTA Section */}
-      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-white text-black">
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-primary text-primary-foreground">
         <div className="absolute inset-0 bg-grid-pattern opacity-10 pointer-events-none"></div>
         <div className="relative z-10 text-center px-6">
           <ScrollReveal>
@@ -176,7 +178,7 @@ export const Home = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={0.2}>
-            <p className="text-2xl md:text-3xl max-w-3xl mx-auto mb-16 font-serif italic text-black/60">
+            <p className="text-2xl md:text-3xl max-w-3xl mx-auto mb-16 font-serif italic text-primary-foreground/60">
               The future isn't just coming—it's being computed.
             </p>
           </ScrollReveal>
@@ -184,7 +186,7 @@ export const Home = () => {
           <ScrollReveal delay={0.4}>
             <div className="flex justify-center">
               <Link to="/login">
-                <Button size="lg" className="h-20 px-16 rounded-full bg-black text-white hover:bg-black/90 text-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-2xl">
+                <Button size="lg" className="h-20 px-16 rounded-full bg-primary-foreground text-primary hover:bg-primary-foreground/90 text-2xl font-black transition-all hover:scale-105 active:scale-95 shadow-2xl">
                   START NOW
                 </Button>
               </Link>
@@ -194,7 +196,7 @@ export const Home = () => {
 
         <motion.div
           style={{ y: y2 }}
-          className="absolute -bottom-20 right-0 text-[15vw] font-black text-black/[0.03] select-none pointer-events-none whitespace-nowrap uppercase italic"
+          className="absolute -bottom-20 right-0 text-[15vw] font-black text-primary-foreground/[0.03] select-none pointer-events-none whitespace-nowrap uppercase italic"
         >
           ACADEMIC REVOLUTION
         </motion.div>
