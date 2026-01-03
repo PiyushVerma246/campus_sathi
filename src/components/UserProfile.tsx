@@ -1,14 +1,15 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { User, Mail, Phone, MapPin, Calendar, Edit, Save, X } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { User, Mail, Phone, MapPin, Calendar, Edit, Save, X, Briefcase, GraduationCap, Building2, Quote, Activity, FileText, MessageSquare } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
 
 interface UserProfileData {
   fullName: string;
@@ -24,15 +25,14 @@ export const UserProfile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  
-  // Mock user profile data - in real app, this would come from API/database
+
   const [profileData, setProfileData] = useState<UserProfileData>({
     fullName: user?.username === 'admin' ? 'Administrator' : 'John Doe',
     email: user?.username === 'admin' ? 'admin@institution.edu' : 'john.doe@institution.edu',
     phone: '+1 (555) 123-4567',
     department: user?.username === 'admin' ? 'IT Administration' : 'Computer Science',
     location: 'Main Campus, Building A',
-    bio: user?.username === 'admin' 
+    bio: user?.username === 'admin'
       ? 'System administrator responsible for managing institutional data and user access.'
       : 'Student interested in AI and machine learning. Active participant in campus activities.',
     joinDate: '2023-01-15'
@@ -64,201 +64,202 @@ export const UserProfile = () => {
   };
 
   return (
-    <Card className="backdrop-blur-sm bg-card/95 border-0 shadow-elegant">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Avatar className="h-16 w-16 bg-gradient-primary">
-              <AvatarFallback className="text-white font-semibold text-lg">
-                {getInitials(profileData.fullName)}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-2xl flex items-center space-x-2">
+    <div className="space-y-4 animate-in fade-in duration-500 pb-4">
+      {/* Banner & Header Section */}
+      <div className="relative">
+        <div className="h-32 md:h-40 rounded-t-[2rem] bg-gradient-to-r from-primary/20 via-primary/5 to-background border-x border-t border-foreground/10 overflow-hidden relative">
+          <div className="absolute inset-0 bg-grid-pattern opacity-10" />
+          <div className="absolute top-0 right-0 p-8 opacity-50">
+            <Building2 className="h-40 w-40 text-primary/10 -rotate-12 transform translate-x-8 -translate-y-8" />
+          </div>
+        </div>
+
+        <div className="mx-6 md:mx-10 relative -mt-10 md:-mt-12 mb-4 flex flex-col md:flex-row items-end justify-between gap-4">
+          <div className="flex items-end gap-4">
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-gradient-to-br from-primary to-purple-500 rounded-[2rem] blur opacity-75 group-hover:opacity-100 transition duration-500" />
+              <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-[2rem] bg-background border-4 border-background flex items-center justify-center overflow-hidden">
+                <Avatar className="h-full w-full rounded-none">
+                  <AvatarImage src="/placeholder-avatar.jpg" alt={profileData.fullName} className="object-cover" />
+                  <AvatarFallback className="text-2xl md:text-3xl font-black bg-primary/10 text-primary w-full h-full flex items-center justify-center rounded-none">
+                    {getInitials(profileData.fullName)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            </div>
+
+            <div className="mb-1 md:mb-2">
+              <h1 className="text-2xl md:text-3xl font-black tracking-tighter text-foreground mb-1 flex items-center gap-2">
                 {profileData.fullName}
-                <Badge variant={user?.role === 'admin' ? 'default' : 'secondary'}>
-                  {user?.role === 'admin' ? 'Administrator' : 'User'}
+                <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 uppercase tracking-widest text-[9px] py-0.5 px-2 hidden md:inline-flex">
+                  {user?.role === 'admin' ? 'Administrator' : 'Student'}
                 </Badge>
-              </CardTitle>
-              <CardDescription className="text-base">
-                {profileData.department}
-              </CardDescription>
+              </h1>
+              <div className="flex items-center gap-3 text-foreground/60 text-xs md:text-sm font-medium">
+                <span className="flex items-center gap-1">
+                  <Briefcase className="h-3 w-3" />
+                  {profileData.department}
+                </span>
+                <span className="hidden md:flex items-center gap-1">
+                  <MapPin className="h-3 w-3" />
+                  {profileData.location}
+                </span>
+              </div>
             </div>
           </div>
-          
-          {!isEditing ? (
-            <Button onClick={handleEdit} variant="outline" size="sm">
-              <Edit className="h-4 w-4 mr-2" />
-              Edit Profile
-            </Button>
-          ) : (
-            <div className="flex space-x-2">
-              <Button onClick={handleSave} variant="default" size="sm">
-                <Save className="h-4 w-4 mr-2" />
-                Save
+
+          <div className="flex gap-2 mb-1 w-full md:w-auto">
+            {!isEditing ? (
+              <Button onClick={handleEdit} size="sm" className="flex-1 md:flex-none rounded-xl bg-foreground text-background hover:bg-primary hover:text-white font-bold tracking-wide shadow-lg transition-all h-8 text-xs">
+                <Edit className="h-3 w-3 mr-2" />
+                Edit
               </Button>
-              <Button onClick={handleCancel} variant="outline" size="sm">
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-            </div>
-          )}
-        </div>
-      </CardHeader>
-
-      <CardContent className="space-y-6">
-        {/* Contact Information */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="font-semibold text-foreground flex items-center">
-              <User className="h-5 w-5 mr-2 text-primary" />
-              Personal Information
-            </h3>
-            
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="fullName">Full Name</Label>
-                {isEditing ? (
-                  <Input
-                    id="fullName"
-                    value={editData.fullName}
-                    onChange={(e) => setEditData({...editData, fullName: e.target.value})}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">{profileData.fullName}</p>
-                )}
+            ) : (
+              <div className="flex gap-2 w-full md:w-auto">
+                <Button onClick={handleSave} size="sm" className="flex-1 md:flex-none rounded-xl bg-primary text-white hover:bg-primary/90 h-8 text-xs">
+                  <Save className="h-3 w-3 mr-2" />
+                  Save
+                </Button>
+                <Button onClick={handleCancel} size="sm" variant="outline" className="flex-1 md:flex-none rounded-xl border-foreground/10 hover:bg-foreground/5 h-8 text-xs">
+                  <X className="h-3 w-3 mr-2" />
+                  Cancel
+                </Button>
               </div>
-
-              <div>
-                <Label htmlFor="email" className="flex items-center space-x-2">
-                  <Mail className="h-4 w-4" />
-                  <span>Email</span>
-                </Label>
-                {isEditing ? (
-                  <Input
-                    id="email"
-                    type="email"
-                    value={editData.email}
-                    onChange={(e) => setEditData({...editData, email: e.target.value})}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">{profileData.email}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="phone" className="flex items-center space-x-2">
-                  <Phone className="h-4 w-4" />
-                  <span>Phone</span>
-                </Label>
-                {isEditing ? (
-                  <Input
-                    id="phone"
-                    value={editData.phone}
-                    onChange={(e) => setEditData({...editData, phone: e.target.value})}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">{profileData.phone}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="font-semibold text-foreground flex items-center">
-              <MapPin className="h-5 w-5 mr-2 text-primary" />
-              Institution Details
-            </h3>
-            
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="department">Department</Label>
-                {isEditing ? (
-                  <Input
-                    id="department"
-                    value={editData.department}
-                    onChange={(e) => setEditData({...editData, department: e.target.value})}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">{profileData.department}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="location">Location</Label>
-                {isEditing ? (
-                  <Input
-                    id="location"
-                    value={editData.location}
-                    onChange={(e) => setEditData({...editData, location: e.target.value})}
-                    className="mt-1"
-                  />
-                ) : (
-                  <p className="text-sm text-muted-foreground mt-1">{profileData.location}</p>
-                )}
-              </div>
-
-              <div>
-                <Label className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>Join Date</span>
-                </Label>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {new Date(profileData.joinDate).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
+      </div>
 
-        {/* Bio Section */}
-        <div className="space-y-3">
-          <Label htmlFor="bio">Bio</Label>
-          {isEditing ? (
-            <Textarea
-              id="bio"
-              value={editData.bio}
-              onChange={(e) => setEditData({...editData, bio: e.target.value})}
-              rows={4}
-              placeholder="Tell us about yourself..."
-            />
-          ) : (
-            <p className="text-sm text-muted-foreground p-3 bg-muted/50 rounded-md">
-              {profileData.bio}
-            </p>
-          )}
-        </div>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        {[
+          { label: 'Days Active', value: Math.floor((Date.now() - new Date(profileData.joinDate).getTime()) / (1000 * 60 * 60 * 24)), icon: Calendar },
+          { label: 'Queries Run', value: user?.role === 'admin' ? '500+' : '124', icon: MessageSquare },
+          { label: 'Files Synced', value: user?.role === 'admin' ? '150+' : '12', icon: FileText },
+          { label: 'Efficiency', value: '98%', icon: Activity },
+        ].map((stat, i) => (
+          <motion.div
+            key={i}
+            whileHover={{ y: -3 }}
+            className="p-3 md:p-4 rounded-[1.5rem] bg-foreground/[0.03] border border-foreground/5 backdrop-blur-sm flex flex-col items-center justify-center text-center group hover:border-primary/20 transition-all"
+          >
+            <div className="p-2 bg-background rounded-xl mb-2 shadow-sm group-hover:bg-primary/10 transition-colors">
+              <stat.icon className="h-4 w-4 text-foreground/40 group-hover:text-primary transition-colors" />
+            </div>
+            <div className="text-xl md:text-2xl font-black text-foreground mb-0.5">{stat.value}</div>
+            <div className="text-[10px] uppercase tracking-widest text-foreground/40 font-bold">{stat.label}</div>
+          </motion.div>
+        ))}
+      </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">{user?.role === 'admin' ? '150+' : '25'}</div>
-            <div className="text-sm text-muted-foreground">
-              {user?.role === 'admin' ? 'Documents Managed' : 'Questions Asked'}
+      {/* Main Content Grid */}
+      <div className="grid md:grid-cols-3 gap-4 md:gap-6">
+        {/* Personal Info */}
+        <Card className="md:col-span-1 border-foreground/10 bg-foreground/[0.02] backdrop-blur-3xl shadow-xl rounded-[2rem]">
+          <CardHeader className="pb-2 pt-4 px-6">
+            <CardTitle className="flex items-center gap-2 text-base font-bold">
+              <User className="h-4 w-4 text-primary" />
+              Personal
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 px-6 pb-6">
+            <div className="space-y-1">
+              <Label className="text-foreground/50 text-[10px] uppercase tracking-widest font-bold">Full Name</Label>
+              {isEditing ? (
+                <Input value={editData.fullName} onChange={(e) => setEditData({ ...editData, fullName: e.target.value })} className="h-8 text-sm bg-background border-foreground/10" />
+              ) : (
+                <div className="font-semibold text-sm">{profileData.fullName}</div>
+              )}
             </div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">{user?.role === 'admin' ? '500+' : '12'}</div>
-            <div className="text-sm text-muted-foreground">
-              {user?.role === 'admin' ? 'User Queries' : 'Files Uploaded'}
+            <div className="space-y-1">
+              <Label className="text-foreground/50 text-[10px] uppercase tracking-widest font-bold">Email</Label>
+              {isEditing ? (
+                <Input value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} className="h-8 text-sm bg-background border-foreground/10" />
+              ) : (
+                <div className="font-medium text-sm flex items-center gap-2 truncate">
+                  <Mail className="h-3 w-3 text-foreground/40 flex-shrink-0" />
+                  <span className="truncate">{profileData.email}</span>
+                </div>
+              )}
             </div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">98%</div>
-            <div className="text-sm text-muted-foreground">Response Rate</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary">
-              {Math.floor((Date.now() - new Date(profileData.joinDate).getTime()) / (1000 * 60 * 60 * 24))}
+            <div className="space-y-1">
+              <Label className="text-foreground/50 text-[10px] uppercase tracking-widest font-bold">Phone</Label>
+              {isEditing ? (
+                <Input value={editData.phone} onChange={(e) => setEditData({ ...editData, phone: e.target.value })} className="h-8 text-sm bg-background border-foreground/10" />
+              ) : (
+                <div className="font-medium text-sm flex items-center gap-2">
+                  <Phone className="h-3 w-3 text-foreground/40" />
+                  {profileData.phone}
+                </div>
+              )}
             </div>
-            <div className="text-sm text-muted-foreground">Days Active</div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+
+        {/* Academic/Inst Info */}
+        <Card className="md:col-span-1 border-foreground/10 bg-foreground/[0.02] backdrop-blur-3xl shadow-xl rounded-[2rem]">
+          <CardHeader className="pb-2 pt-4 px-6">
+            <CardTitle className="flex items-center gap-2 text-base font-bold">
+              <GraduationCap className="h-4 w-4 text-primary" />
+              Academic
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 px-6 pb-6">
+            <div className="space-y-1">
+              <Label className="text-foreground/50 text-[10px] uppercase tracking-widest font-bold">Department</Label>
+              {isEditing ? (
+                <Input value={editData.department} onChange={(e) => setEditData({ ...editData, department: e.target.value })} className="h-8 text-sm bg-background border-foreground/10" />
+              ) : (
+                <div className="font-semibold text-sm">{profileData.department}</div>
+              )}
+            </div>
+            <div className="space-y-1">
+              <Label className="text-foreground/50 text-[10px] uppercase tracking-widest font-bold">Location</Label>
+              {isEditing ? (
+                <Input value={editData.location} onChange={(e) => setEditData({ ...editData, location: e.target.value })} className="h-8 text-sm bg-background border-foreground/10" />
+              ) : (
+                <div className="font-medium text-sm flex items-center gap-2">
+                  <MapPin className="h-3 w-3 text-foreground/40" />
+                  {profileData.location}
+                </div>
+              )}
+            </div>
+            <div className="space-y-1">
+              <Label className="text-foreground/50 text-[10px] uppercase tracking-widest font-bold">Joined</Label>
+              <div className="font-medium text-sm flex items-center gap-2">
+                <Calendar className="h-3 w-3 text-foreground/40" />
+                {new Date(profileData.joinDate).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Bio */}
+        <Card className="md:col-span-1 border-foreground/10 bg-foreground/[0.02] backdrop-blur-3xl shadow-xl rounded-[2rem]">
+          <CardHeader className="pb-2 pt-4 px-6">
+            <CardTitle className="flex items-center gap-2 text-base font-bold">
+              <Quote className="h-4 w-4 text-primary" />
+              Bio
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="h-full px-6 pb-6">
+            {isEditing ? (
+              <Textarea
+                value={editData.bio}
+                onChange={(e) => setEditData({ ...editData, bio: e.target.value })}
+                rows={6}
+                className="bg-background border-foreground/10 resize-none h-[140px] text-sm"
+              />
+            ) : (
+              <div className="italic text-foreground/70 leading-relaxed p-4 bg-background/50 rounded-2xl border border-foreground/5 h-full relative text-sm">
+                <span className="text-2xl absolute -top-2 -left-2 text-primary/20">"</span>
+                {profileData.bio}
+                <span className="text-2xl absolute -bottom-4 -right-2 text-primary/20">"</span>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };

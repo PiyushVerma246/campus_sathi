@@ -13,6 +13,8 @@ import { Contact } from "@/pages/Contact";
 import { Login } from "@/pages/Login";
 import { AdminDashboard } from "@/pages/AdminDashboard";
 import { UserDashboard } from "@/pages/UserDashboard";
+import { Events } from "@/pages/Events";
+import { LostAndFound } from "@/pages/LostAndFound";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,23 +31,25 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/lost-and-found" element={<LostAndFound />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
-                <Route 
-                  path="/admin" 
+                <Route
+                  path="/admin"
                   element={
                     <ProtectedRoute requiredRole="admin">
                       <AdminDashboard />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
-                <Route 
-                  path="/dashboard" 
+                <Route
+                  path="/dashboard"
                   element={
                     <ProtectedRoute requiredRole="user">
                       <UserDashboard />
                     </ProtectedRoute>
-                  } 
+                  }
                 />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

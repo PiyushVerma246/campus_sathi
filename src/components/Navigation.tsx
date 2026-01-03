@@ -45,10 +45,10 @@ export const Navigation = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-8">
-            {['Home', 'About', 'Contact'].map((item) => (
+            {['Home', 'About', 'Events', 'Lost & Found', 'Contact'].map((item) => (
               <Link
                 key={item}
-                to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
+                to={item === 'Home' ? '/' : item === 'Lost & Found' ? '/lost-and-found' : `/${item.toLowerCase()}`}
                 className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 hover:text-foreground transition-colors relative group decoration-none hover:no-underline"
               >
                 {item}
@@ -136,10 +136,10 @@ export const Navigation = () => {
             exit={{ opacity: 0, scale: 0.95 }}
             className="absolute top-full left-6 right-6 mt-4 bg-black/95 backdrop-blur-3xl border border-white/10 rounded-3xl p-8 md:hidden flex flex-col items-center space-y-8 shadow-2xl z-[101]"
           >
-            {['Home', 'About', 'Contact'].map((item) => (
+            {['Home', 'About', 'Events', 'Lost & Found', 'Contact'].map((item) => (
               <Link
                 key={item}
-                to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
+                to={item === 'Home' ? '/' : item === 'Lost & Found' ? '/lost-and-found' : `/${item.toLowerCase()}`}
                 className="text-2xl font-black uppercase tracking-tighter text-white decoration-none hover:no-underline"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

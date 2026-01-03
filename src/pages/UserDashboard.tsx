@@ -66,20 +66,20 @@ export const UserDashboard = () => {
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
       <Navigation />
 
-      <div className="max-w-[1600px] mx-auto px-6 pt-40 pb-20">
+      <div className="max-w-[1600px] mx-auto px-6 pt-24 pb-4">
         <ScrollReveal>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
             <div>
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
                 <Layout className="h-3 w-3 text-primary" />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Workspace Active</span>
               </div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter italic">
+              <h1 className="text-3xl md:text-5xl font-black tracking-tighter italic">
                 {t.welcomeBack}, <span className="text-primary">{user?.username}</span>
               </h1>
             </div>
             <div className="text-right">
-              <p className="text-foreground/40 text-sm font-light uppercase tracking-widest leading-loose">
+              <p className="text-foreground/40 text-xs font-light uppercase tracking-widest leading-loose">
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
@@ -87,21 +87,21 @@ export const UserDashboard = () => {
         </ScrollReveal>
 
         <Tabs defaultValue="chat" className="w-full">
-          <ScrollReveal delay={0.2}>
-            <TabsList className="bg-foreground/5 border border-foreground/10 rounded-2xl h-16 p-1 mb-12 flex justify-start overflow-x-auto no-scrollbar">
-              <TabsTrigger value="chat" className="rounded-xl px-10 font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">Portal</TabsTrigger>
-              <TabsTrigger value="history" className="rounded-xl px-10 font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">Archives</TabsTrigger>
-              <TabsTrigger value="files" className="rounded-xl px-10 font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">Sync Labs</TabsTrigger>
-              <TabsTrigger value="profile" className="rounded-xl px-10 font-black uppercase tracking-widest text-[10px] data-[state=active]:bg-background data-[state=active]:text-foreground transition-all">Identity</TabsTrigger>
+          <ScrollReveal delay={0.1}>
+            <TabsList className="bg-foreground/5 border border-foreground/10 rounded-2xl h-12 p-1 mb-6 flex justify-start overflow-x-auto no-scrollbar">
+              <TabsTrigger value="chat" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">Chat</TabsTrigger>
+              <TabsTrigger value="history" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">History</TabsTrigger>
+              <TabsTrigger value="files" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">Files</TabsTrigger>
+              <TabsTrigger value="profile" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">Profile</TabsTrigger>
             </TabsList>
           </ScrollReveal>
 
           <AnimatePresence mode="wait">
             <TabsContent value="chat" className="mt-0">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                 {/* Main Chat Hub */}
                 <div className="lg:col-span-8">
-                  <Card className="h-[750px] flex flex-col bg-foreground/[0.02] border-foreground/10 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl overflow-hidden group">
+                  <Card className="h-[calc(100vh-220px)] min-h-[500px] flex flex-col bg-foreground/[0.02] border-foreground/10 backdrop-blur-3xl rounded-[2rem] shadow-2xl overflow-hidden group">
                     <CardHeader className="bg-foreground/[0.03] border-b border-foreground/10 py-6 px-10 flex flex-row items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="p-3 bg-primary/20 rounded-2xl">
@@ -115,11 +115,11 @@ export const UserDashboard = () => {
                       <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground" onClick={() => setUserMessages([])}>Reset Hub</Button>
                     </CardHeader>
 
-                    <CardContent className="flex-1 flex flex-col p-0">
+                    <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
                       <ScrollArea className="flex-1 px-10 py-10" ref={scrollAreaRef}>
                         <div className="space-y-6">
                           {userMessages.length === 0 && (
-                            <div className="flex flex-col items-center justify-center min-h-[500px] text-center">
+                            <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
                               <div className="relative">
                                 <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full" />
                                 <Sparkles className="h-20 w-20 text-primary mb-8 animate-pulse relative z-10" />
@@ -165,24 +165,24 @@ export const UserDashboard = () => {
                         </div>
                       </ScrollArea>
 
-                      <div className="p-8 bg-background border-t border-foreground/10 backdrop-blur-md">
+                      <div className="p-6 md:p-8 bg-foreground/[0.04] border-t border-foreground/10 backdrop-blur-xl">
                         <form onSubmit={handleSendMessage} className="flex items-center space-x-4 max-w-5xl mx-auto">
                           <div className="relative flex-1 group">
                             <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-accent/50 rounded-[2rem] blur opacity-25 group-focus-within:opacity-50 transition duration-1000 group-focus-within:duration-200" />
-                            <div className="relative flex items-center bg-foreground/[0.03] border border-foreground/10 rounded-[2rem] focus-within:border-primary/50 transition-all px-8 py-2">
+                            <div className="relative flex items-center bg-background border border-foreground/10 rounded-[2rem] focus-within:border-primary/50 transition-all px-6 py-2 shadow-lg">
                               <Input
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 placeholder="Quantum Retrieval Request..."
-                                className="h-16 border-none bg-transparent focus-visible:ring-0 text-lg placeholder:text-foreground/20 px-0"
+                                className="h-14 md:h-16 border-none bg-transparent focus-visible:ring-0 text-base md:text-lg placeholder:text-foreground/30 px-2"
                                 disabled={isTyping}
                               />
                               <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="ml-4 p-3 bg-foreground/5 rounded-2xl text-foreground/40 hover:text-primary hover:bg-primary/10 transition-all"
+                                className="ml-2 p-2 bg-foreground/5 rounded-2xl text-foreground/40 hover:text-primary hover:bg-primary/10 transition-all"
                               >
-                                <Paperclip className="h-6 w-6" />
+                                <Paperclip className="h-5 w-5" />
                               </button>
                             </div>
                           </div>
@@ -190,7 +190,7 @@ export const UserDashboard = () => {
                             type="submit"
                             size="lg"
                             disabled={!message.trim() || isTyping}
-                            className="h-16 w-16 md:h-20 md:w-20 rounded-[2rem] bg-foreground text-background hover:bg-primary hover:text-white shadow-2xl transition-all duration-500 hover:rotate-6 active:scale-95"
+                            className="h-14 w-14 md:h-20 md:w-20 rounded-[2rem] bg-foreground text-background hover:bg-primary hover:text-white shadow-2xl transition-all duration-500 hover:rotate-6 active:scale-95 flex-shrink-0"
                           >
                             <Send className="h-6 w-6" />
                           </Button>
@@ -223,6 +223,25 @@ export const UserDashboard = () => {
                   </ScrollReveal>
                 </div>
               </div>
+            </TabsContent>
+
+            <TabsContent value="history">
+              <ScrollReveal>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[1, 2, 3].map((i) => (
+                    <Card key={i} className="bg-foreground/[0.02] border-foreground/10 rounded-[2rem] p-6 hover:bg-foreground/[0.04] transition-all cursor-pointer group">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
+                          <MessageSquare className="h-5 w-5 text-primary" />
+                        </div>
+                        <span className="text-[9px] font-black uppercase tracking-widest text-foreground/30">2 days ago</span>
+                      </div>
+                      <h4 className="text-lg font-bold mb-2">Research Session #{100 + i}</h4>
+                      <p className="text-sm text-foreground/50 line-clamp-2">Inquiry regarding advanced quantum mechanics principles and their application in...</p>
+                    </Card>
+                  ))}
+                </div>
+              </ScrollReveal>
             </TabsContent>
 
             <TabsContent value="files">
