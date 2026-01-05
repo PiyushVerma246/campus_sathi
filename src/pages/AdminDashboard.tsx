@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2, FileText, AlertCircle, HelpCircle, MessageSquare, Shield, Activity, Database, Sparkles, ArrowRight } from 'lucide-react';
+import { Plus, Edit2, Trash2, FileText, AlertCircle, HelpCircle, MessageSquare, Shield, Activity, Database, Sparkles, ArrowRight, X } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ScrollReveal';
@@ -19,6 +19,7 @@ export const AdminDashboard = () => {
   const { t } = useLanguage();
   const { institutionalData, addInstitutionalData, updateInstitutionalData, deleteInstitutionalData, chatMessages } = useData();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedNotice, setSelectedNotice] = useState<InstitutionalData | null>(null);
   const [editingItem, setEditingItem] = useState<InstitutionalData | null>(null);
   const [formData, setFormData] = useState({ title: '', content: '', type: 'notice' as 'circular' | 'notice' | 'faq' });
 
@@ -142,7 +143,7 @@ export const AdminDashboard = () => {
                 <CardContent className="p-0">
                   <div className="divide-y divide-white/5">
                     {institutionalData.map((item) => (
-                      <div key={item.id} className="p-8 hover:bg-white/[0.02] transition-all group flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                      <div key={item.id} className="p-8 hover:bg-white/[0.02] transition-all group flex flex-col md:flex-row justify-between items-start md:items-center gap-6 cursor-pointer" onClick={() => setSelectedNotice(item)}>
                         <div className="flex items-start space-x-6">
                           <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-primary/20 transition-colors">
                             {getTypeIcon(item.type)}
@@ -155,7 +156,7 @@ export const AdminDashboard = () => {
                             <p className="text-white/40 text-sm font-light leading-relaxed max-w-xl line-clamp-2">{item.content}</p>
                           </div>
                         </div>
-                        <div className="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                           <Button variant="ghost" size="icon" onClick={() => handleEdit(item)} className="h-12 w-12 rounded-xl border border-white/10 hover:bg-white/5"><Edit2 className="h-4 w-4" /></Button>
                           <Button variant="ghost" size="icon" onClick={() => deleteInstitutionalData(item.id)} className="h-12 w-12 rounded-xl border border-white/10 hover:bg-red-500/10 hover:text-red-400 group/del"><Trash2 className="h-4 w-4 group-hover/del:scale-110 transition-transform" /></Button>
                         </div>
@@ -192,6 +193,58 @@ export const AdminDashboard = () => {
           </div>
         </div>
       </div>
+      <Dialog open={!!selectedNotice} onOpenChange={(open) => !open && setSelectedNotice(null)}>
+        <DialogContent className="max-w-2xl bg-black/95 border-white/10 backdrop-blur-3xl text-white rounded-[2rem] p-0 overflow-hidden shadow-2xl">
+          {selectedNotice && (
+            <div className="flex flex-col max-h-[85vh]">
+              <div className="p-10 border-b border-white/10 bg-white/[0.02]">
+                <div className="flex items-start justify-between mb-8">
+                  <div className="p-5 bg-primary/10 rounded-2xl border border-primary/20 text-primary">
+                    {getTypeIcon(selectedNotice.type)}
+                  </div>
+                  <Badge className="bg-white/5 border-white/10 text-xs font-black uppercase tracking-widest px-4 py-2">{selectedNotice.type}</Badge>
+                </div>
+                <DialogHeader>
+                  <DialogTitle className="text-4xl font-black italic tracking-tighter text-white mb-3 leading-tight">{selectedNotice.title}</DialogTitle>
+                  <DialogDescription className="text-white/40 font-mono text-xs uppercase tracking-widest">
+                    ID: {selectedNotice.id.slice(0, 8)} • VECTOR NODE
+                  </DialogDescription>
+                </DialogHeader>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-10">
+                <div className="prose prose-invert max-w-none">
+                  <div className="text-lg leading-relaxed text-white/80 font-light whitespace-pre-wrap">
+                    {selectedNotice.content}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 border-t border-white/10 bg-white/[0.02] flex gap-4">
+                <Button
+                  onClick={() => {
+                    handleEdit(selectedNotice);
+                    setSelectedNotice(null);
+                  }}
+                  className="flex-1 h-16 rounded-xl bg-white text-black font-black uppercase tracking-widest hover:bg-white/90 text-sm"
+                >
+                  <Edit2 className="h-5 w-5 mr-3" /> Modify Node
+                </Button>
+                <Button
+                  onClick={() => {
+                    deleteInstitutionalData(selectedNotice.id);
+                    setSelectedNotice(null);
+                  }}
+                  variant="outline"
+                  className="flex-1 h-16 rounded-xl border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-300 font-black uppercase tracking-widest text-sm"
+                >
+                  <Trash2 className="h-5 w-5 mr-3" /> Terminate Node
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
