@@ -3,14 +3,11 @@ import { useData, ChatMessage } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Navigation } from '@/components/Navigation';
-import { UserProfile } from '@/components/UserProfile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Send, Upload, MessageSquare, Bot, User, FileText, UserCircle, Paperclip, History, Trash2, ArrowRight, Sparkles, Layout } from 'lucide-react';
+import { Send, Upload, FileText, Paperclip, Sparkles, Layout, Calendar, Shield, Cpu, BookOpen } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScrollReveal } from '@/components/ScrollReveal';
@@ -22,8 +19,6 @@ export const UserDashboard = () => {
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [userMessages, setUserMessages] = useState<ChatMessage[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<Array<{ id: string, name: string, size: number, type: string, uploadDate: Date, content?: string }>>([]);
-  const [chatHistory, setChatHistory] = useState<Array<{ id: string, title: string, messages: ChatMessage[], date: Date }>>([]);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -56,228 +51,189 @@ export const UserDashboard = () => {
     const files = event.target.files;
     if (!files) return;
     Array.from(files).forEach(file => {
-      const newFile = { id: Date.now().toString() + Math.random().toString(36).substr(2, 9), name: file.name, size: file.size, type: file.type, uploadDate: new Date() };
-      setUploadedFiles(prev => [...prev, newFile]);
       toast({ title: "Neural Sync Complete", description: `${file.name} is now part of the knowledge base.` });
     });
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-sans">
       <Navigation />
 
-      <div className="max-w-[1600px] mx-auto px-6 pt-24 pb-4">
+      <div className="max-w-[1600px] mx-auto px-6 pt-28 pb-10">
         <ScrollReveal>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 border-b border-foreground/5 pb-8">
             <div>
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-2">
-                <Layout className="h-3 w-3 text-primary" />
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
+                <Layout className="h-3 w-3 text-primary animate-pulse" />
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Workspace Active</span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-black tracking-tighter italic">
-                {t.welcomeBack}, <span className="text-primary">{user?.username}</span>
+              <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2">
+                Welcome back, <span className="text-primary">{user?.username}</span>
               </h1>
+              <p className="text-foreground/60 text-sm font-medium">Here's what's happening on your campus today</p>
             </div>
             <div className="text-right">
-              <p className="text-foreground/40 text-xs font-light uppercase tracking-widest leading-loose">
+              <p className="text-foreground/40 text-xs font-bold uppercase tracking-widest bg-foreground/5 px-4 py-2 rounded-lg">
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
           </div>
         </ScrollReveal>
 
-        <Tabs defaultValue="chat" className="w-full">
-          <ScrollReveal delay={0.1}>
-            <TabsList className="bg-foreground/5 border border-foreground/10 rounded-2xl h-12 p-1 mb-6 flex justify-start overflow-x-auto no-scrollbar">
-              <TabsTrigger value="chat" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">Chat</TabsTrigger>
-              <TabsTrigger value="history" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">History</TabsTrigger>
-              <TabsTrigger value="files" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">Files</TabsTrigger>
-              <TabsTrigger value="profile" className="rounded-xl px-6 font-black uppercase tracking-widest text-xs data-[state=active]:bg-background data-[state=active]:text-foreground text-foreground/60 hover:text-foreground transition-all">Profile</TabsTrigger>
-            </TabsList>
-          </ScrollReveal>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Left Section - Campus Sathi Core (AI Assistant) */}
+          <div className="lg:col-span-8 h-full">
+            <ScrollReveal delay={0.1} className="h-full">
+              <Card className="h-[calc(100vh-280px)] min-h-[600px] flex flex-col bg-foreground/[0.02] border-foreground/10 backdrop-blur-3xl rounded-[2rem] shadow-sm overflow-hidden group hover:border-foreground/20 transition-all duration-500">
+                <CardHeader className="bg-transparent border-b border-foreground/5 py-6 px-8">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold tracking-tight">Campus Sathi Core</h2>
+                      <p className="text-xs text-foreground/50 font-medium">Your AI assistant for campus information</p>
+                    </div>
+                  </div>
+                </CardHeader>
 
-          <AnimatePresence mode="wait">
-            <TabsContent value="chat" className="mt-0">
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                {/* Main Chat Hub */}
-                <div className="lg:col-span-8">
-                  <Card className="h-[calc(100vh-220px)] min-h-[500px] flex flex-col bg-foreground/[0.02] border-foreground/10 backdrop-blur-3xl rounded-[2rem] shadow-2xl overflow-hidden group">
-                    <CardHeader className="bg-foreground/[0.03] border-b border-foreground/10 py-6 px-10 flex flex-row items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="p-3 bg-primary/20 rounded-2xl">
-                          <Bot className="h-6 w-6 text-primary" />
+                <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative">
+                  <ScrollArea className="flex-1 px-8 py-8" ref={scrollAreaRef}>
+                    <div className="space-y-6 max-w-4xl mx-auto">
+                      {userMessages.length === 0 && (
+                        <div className="flex flex-col items-center justify-center min-h-[300px] text-center opacity-50">
+                          <Cpu className="h-16 w-16 text-foreground/20 mb-6" />
+                          <h3 className="text-xl font-bold text-foreground/40">Ready to assist</h3>
+                          <p className="text-sm text-foreground/30 mt-2 max-w-xs">Ask about schedules, policies, or events to get started.</p>
                         </div>
-                        <div>
-                          <CardTitle className="text-xl font-black tracking-tighter">Campus_Sathi Core</CardTitle>
-                          <span className="text-[10px] text-primary font-black uppercase tracking-widest">Active Processing</span>
-                        </div>
-                      </div>
-                      <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-foreground/40 hover:text-foreground" onClick={() => setUserMessages([])}>Reset Hub</Button>
-                    </CardHeader>
+                      )}
 
-                    <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-                      <ScrollArea className="flex-1 px-10 py-10" ref={scrollAreaRef}>
-                        <div className="space-y-6">
-                          {userMessages.length === 0 && (
-                            <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
-                              <div className="relative">
-                                <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full" />
-                                <Sparkles className="h-20 w-20 text-primary mb-8 animate-pulse relative z-10" />
-                              </div>
-                              <h3 className="text-3xl font-black text-foreground/20 uppercase tracking-tighter italic">Initialize neural gateway</h3>
-                              <p className="text-foreground/10 text-sm mt-4 uppercase tracking-[0.3em] font-bold">Awaiting Input Vector</p>
-                            </div>
-                          )}
+                      {userMessages.map((msg) => (
+                        <motion.div
+                          key={msg.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div className={`max-w-[85%] p-5 rounded-2xl text-sm leading-relaxed ${msg.isUser
+                              ? 'bg-primary text-primary-foreground rounded-tr-sm'
+                              : 'bg-foreground/5 text-foreground/90 rounded-tl-sm border border-foreground/5'
+                            }`}>
+                            {msg.content}
+                          </div>
+                        </motion.div>
+                      ))}
 
-                          {userMessages.map((msg, idx) => (
-                            <motion.div
-                              key={msg.id}
-                              initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
-                            >
-                              <div className={`relative max-w-[85%] group ${msg.isUser ? 'order-2' : ''}`}>
-                                <div className={`p-6 rounded-[2rem] text-lg font-light leading-relaxed backdrop-blur-3xl transition-all duration-300 ${msg.isUser
-                                  ? 'bg-gradient-to-br from-primary to-primary-hover text-primary-foreground rounded-tr-none shadow-[0_10px_30px_-10px_rgba(var(--primary),0.5)]'
-                                  : 'bg-foreground/[0.03] border border-foreground/10 text-foreground/90 rounded-tl-none shadow-2xl hover:bg-foreground/[0.05]'
-                                  }`}>
-                                  {msg.content}
-                                  <div className={`mt-4 text-[9px] font-black uppercase tracking-[0.2em] opacity-30 flex items-center ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-                                    {msg.isUser ? <User className="h-3 w-3 mr-1" /> : <Bot className="h-3 w-3 mr-1" />}
-                                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </div>
-                                </div>
-                              </div>
-                            </motion.div>
-                          ))}
-
-                          {isTyping && (
-                            <div className="flex justify-start">
-                              <div className="bg-foreground/[0.03] border border-foreground/10 p-6 rounded-[2rem] rounded-tl-none shadow-xl backdrop-blur-sm">
-                                <span className="flex space-x-2">
-                                  <span className="w-2 h-2 bg-primary rounded-full animate-bounce" />
-                                  <span className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:0.2s]" />
-                                  <span className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:0.4s]" />
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </ScrollArea>
-
-                      <div className="p-6 md:p-8 bg-foreground/[0.04] border-t border-foreground/10 backdrop-blur-xl">
-                        <form onSubmit={handleSendMessage} className="flex items-center space-x-4 max-w-5xl mx-auto">
-                          <div className="relative flex-1 group">
-                            <div className="absolute -inset-1 bg-gradient-to-r from-primary/50 to-accent/50 rounded-[2rem] blur opacity-25 group-focus-within:opacity-50 transition duration-1000 group-focus-within:duration-200" />
-                            <div className="relative flex items-center bg-background border border-foreground/10 rounded-[2rem] focus-within:border-primary/50 transition-all px-6 py-2 shadow-lg">
-                              <Input
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Quantum Retrieval Request..."
-                                className="h-14 md:h-16 border-none bg-transparent focus-visible:ring-0 text-base md:text-lg placeholder:text-foreground/30 px-2"
-                                disabled={isTyping}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => fileInputRef.current?.click()}
-                                className="ml-2 p-2 bg-foreground/5 rounded-2xl text-foreground/40 hover:text-primary hover:bg-primary/10 transition-all"
-                              >
-                                <Paperclip className="h-5 w-5" />
-                              </button>
+                      {isTyping && (
+                        <div className="flex justify-start">
+                          <div className="bg-foreground/5 px-6 py-4 rounded-2xl rounded-tl-sm">
+                            <div className="flex space-x-1.5">
+                              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" />
+                              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce [animation-delay:0.2s]" />
+                              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce [animation-delay:0.4s]" />
                             </div>
                           </div>
+                        </div>
+                      )}
+                    </div>
+                  </ScrollArea>
+
+                  <div className="p-6 bg-background/50 backdrop-blur-md border-t border-foreground/5">
+                    <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto relative group">
+                      <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-focus-within:opacity-20 transition-opacity duration-500 rounded-3xl"></div>
+                      <div className="relative flex items-center bg-background border border-foreground/10 rounded-2xl shadow-sm focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
+                        <Input
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          placeholder="Ask anything about your campus..."
+                          className="h-14 border-none bg-transparent focus-visible:ring-0 text-base px-6 placeholder:text-foreground/30"
+                          disabled={isTyping}
+                        />
+                        <div className="flex items-center space-x-2 pr-4">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="p-2 text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-xl transition-colors"
+                          >
+                            <Paperclip className="h-5 w-5" />
+                          </button>
                           <Button
                             type="submit"
-                            size="lg"
+                            size="icon"
                             disabled={!message.trim() || isTyping}
-                            className="h-14 w-14 md:h-20 md:w-20 rounded-[2rem] bg-foreground text-background hover:bg-primary hover:text-white shadow-2xl transition-all duration-500 hover:rotate-6 active:scale-95 flex-shrink-0"
+                            className="h-10 w-10 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transition-transform active:scale-95"
                           >
-                            <Send className="h-6 w-6" />
+                            <Send className="h-4 w-4" />
                           </Button>
-                        </form>
-                        <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Info Sidestrip */}
-                <div className="lg:col-span-4 space-y-8">
-                  <ScrollReveal direction="right" delay={0.3}>
-                    <Card className="bg-foreground/[0.02] border-foreground/10 rounded-[2.5rem] p-8">
-                      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-foreground/40 mb-8 ml-2 italic">Knowledge Matrix</h3>
-                      <div className="space-y-4">
-                        {["Policy Inquiry", "Resource Allocation", "Exam Schedules", "Campus Events"].map((item, i) => (
-                          <button key={i} onClick={() => setMessage(item)} className="w-full text-left p-6 rounded-2xl bg-foreground/[0.02] border border-foreground/5 hover:border-primary/50 hover:bg-primary/5 transition-all text-sm font-bold uppercase tracking-widest">{item}</button>
-                        ))}
-                      </div>
-                    </Card>
-                  </ScrollReveal>
-
-                  <ScrollReveal direction="right" delay={0.4}>
-                    <div className="p-10 rounded-[2.5rem] bg-gradient-to-br from-primary/20 to-transparent border border-primary/20">
-                      <Sparkles className="h-10 w-10 text-primary mb-6" />
-                      <h4 className="text-xl font-black uppercase tracking-tighter mb-4 italic">Neural Sync v2.0</h4>
-                      <p className="text-foreground/40 text-sm font-light leading-relaxed">System is optimized for high-frequency document analysis. Upload PDFs to initialize local context sync.</p>
-                    </div>
-                  </ScrollReveal>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="history">
-              <ScrollReveal>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {[1, 2, 3].map((i) => (
-                    <Card key={i} className="bg-foreground/[0.02] border-foreground/10 rounded-[2rem] p-6 hover:bg-foreground/[0.04] transition-all cursor-pointer group">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors">
-                          <MessageSquare className="h-5 w-5 text-primary" />
                         </div>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-foreground/30">2 days ago</span>
                       </div>
-                      <h4 className="text-lg font-bold mb-2">Research Session #{100 + i}</h4>
-                      <p className="text-sm text-foreground/50 line-clamp-2">Inquiry regarding advanced quantum mechanics principles and their application in...</p>
-                    </Card>
-                  ))}
-                </div>
-              </ScrollReveal>
-            </TabsContent>
-
-            <TabsContent value="files">
-              <ScrollReveal>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="group h-80 rounded-[2.5rem] border-2 border-dashed border-foreground/10 hover:border-primary/50 hover:bg-primary/5 transition-all flex flex-col items-center justify-center cursor-pointer"
-                  >
-                    <div className="bg-foreground/5 p-8 rounded-full mb-6 group-hover:scale-110 transition-transform">
-                      <Upload className="h-10 w-10 text-foreground/20 group-hover:text-primary transition-colors" />
+                    </form>
+                    <div className="text-center mt-3">
+                      <span className="text-[10px] text-foreground/30 uppercase tracking-widest font-semibold">AI Assistant may produce inaccurate information</span>
                     </div>
-                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">Transmit New Data</span>
                   </div>
-                  {uploadedFiles.map((file) => (
-                    <div key={file.id} className="h-80 p-10 rounded-[2.5rem] border border-foreground/10 bg-foreground/[0.03] flex flex-col justify-between">
-                      <div className="p-4 bg-primary/10 rounded-2xl w-fit">
-                        <FileText className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="text-xl font-black tracking-tighter mb-2 truncate">{file.name}</h4>
-                        <p className="text-foreground/40 text-[10px] font-black uppercase tracking-widest">Synced: {file.uploadDate.toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollReveal>
-            </TabsContent>
+                  <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
+                </CardContent>
+              </Card>
+            </ScrollReveal>
+          </div>
 
-            <TabsContent value="profile">
-              <ScrollReveal>
-                <UserProfile />
-              </ScrollReveal>
-            </TabsContent>
-          </AnimatePresence>
-        </Tabs>
+          {/* Right Section - Quick Access & Neural Sync */}
+          <div className="lg:col-span-4 space-y-6">
+            <ScrollReveal direction="right" delay={0.2}>
+              <div className="space-y-4">
+                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 mb-4 pl-1">Quick Access Panel</h3>
+                {[
+                  { title: "Policy Inquiry", sub: "Rules, regulations, attendance", icon: Shield },
+                  { title: "Resource Allocation", sub: "Labs, equipment, facilities", icon: Cpu },
+                  { title: "Exam Schedules", sub: "Dates, venues, notices", icon: Calendar },
+                  { title: "Campus Events", sub: "Upcoming and ongoing", icon: Layout },
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setMessage(item.title)}
+                    className="w-full text-left p-4 rounded-2xl bg-foreground/[0.02] border border-foreground/10 hover:border-primary/30 hover:bg-foreground/[0.04] transition-all group flex items-center space-x-4 hover:translate-x-1"
+                  >
+                    <div className="p-3 bg-background rounded-xl border border-foreground/5 group-hover:border-primary/20 group-hover:text-primary transition-colors text-foreground/60">
+                      <item.icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-foreground/90">{item.title}</h4>
+                      <p className="text-xs text-foreground/50 font-medium">{item.sub}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal direction="right" delay={0.3}>
+              <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20 rounded-[2rem] p-6 mt-8 overflow-hidden relative">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 blur-[50px] rounded-full -mr-10 -mt-10 pointer-events-none"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="p-2 bg-primary/20 rounded-lg">
+                      <Upload className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="font-bold text-lg">Neural Sync</h3>
+                  </div>
+                  <p className="text-sm text-foreground/60 mb-6 leading-relaxed">
+                    Upload documents to enhance your personal knowledge context.
+                  </p>
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full bg-background border border-foreground/10 text-foreground hover:text-primary hover:border-primary/50 shadow-sm"
+                  >
+                    Upload Documents
+                  </Button>
+                  <p className="text-[10px] text-foreground/30 mt-4 text-center font-medium">
+                    Supported: PDF, DOCX, TXT
+                  </p>
+                </div>
+              </Card>
+            </ScrollReveal>
+          </div>
+        </div>
       </div>
     </div>
   );

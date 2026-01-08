@@ -6,13 +6,15 @@ interface ScrollRevealProps {
     width?: "fit-content" | "100%";
     delay?: number;
     direction?: "up" | "down" | "left" | "right";
+    className?: string;
 }
 
 export const ScrollReveal = ({
     children,
     width = "fit-content",
     delay = 0,
-    direction = "up"
+    direction = "up",
+    className = ""
 }: ScrollRevealProps) => {
     const getVariants = () => {
         const hidden = {
@@ -32,7 +34,7 @@ export const ScrollReveal = ({
     };
 
     return (
-        <div style={{ position: "relative", width, overflow: "hidden" }}>
+        <div style={{ position: "relative", width, overflow: "hidden" }} className={className}>
             <motion.div
                 variants={getVariants()}
                 initial="hidden"
