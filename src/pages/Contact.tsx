@@ -49,21 +49,27 @@ export const Contact = () => {
 
       {/* Deep Space Background Effects */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 rounded-full blur-[150px]" />
-        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-900/10 rounded-full blur-[100px]" />
+        {/* Animated Starfield */}
+        <div className="absolute inset-0 z-0">
+          <div className="stars absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30 animate-pulse" />
+          <div className="stars2 absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-pulse" style={{ animationDelay: '2s', transform: 'scale(1.5)' }} />
+        </div>
+
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/10 rounded-full blur-[120px] animate-float" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 rounded-full blur-[150px] animate-float" style={{ animationDelay: '3s' }} />
+        <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-indigo-900/10 rounded-full blur-[100px] animate-pulse" />
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
       </div>
 
       <div className="relative z-10">
         {/* Space Hero Section */}
-        <section className="pt-40 pb-20 px-6">
-          <div className="max-w-7xl mx-auto text-center">
+        <section className="pt-40 pb-20 px-6 flex flex-col items-center justify-center text-center">
+          <div className="max-w-7xl mx-auto">
             <ScrollReveal>
-              <h1 className="text-7xl md:text-9xl font-black tracking-tighter mb-6">
+              <h1 className="text-7xl md:text-9xl font-black tracking-tighter mb-6 text-center">
                 Get in <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-purple-600">touch</span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-400 font-medium tracking-tight">
+              <p className="text-xl md:text-2xl text-gray-400 font-medium tracking-tight text-center max-w-4xl mx-auto">
                 Reach out, and let's create a universe of possibilities together!
               </p>
             </ScrollReveal>
@@ -161,20 +167,36 @@ export const Contact = () => {
         </section>
 
         {/* Communication Satellites (Info Cards) */}
-        <section className="py-20 px-6">
+        <section className="py-24 px-6 relative overflow-hidden">
+          {/* Section Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
+
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {contactInfos.map((info, idx) => (
                 <ScrollReveal key={idx} delay={idx * 0.1}>
                   <motion.div
-                    whileHover={{ y: -10 }}
-                    className="relative p-10 rounded-[3rem] bg-[#12121e]/50 border border-white/5 backdrop-blur-xl group overflow-hidden"
+                    whileHover={{ y: -15, scale: 1.02 }}
+                    className="relative group h-full"
                   >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${info.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-                    <info.icon className="h-10 w-10 text-purple-400 mb-8 transition-transform duration-500 group-hover:scale-110" />
-                    <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-gray-500 block mb-2">{info.label}</span>
-                    <h3 className="text-2xl font-black mb-2 tracking-tight">{info.title}</h3>
-                    <p className="text-gray-400 text-lg">{info.value}</p>
+                    {/* Hover Glow Effect */}
+                    <div className={`absolute -inset-[1px] bg-gradient-to-br ${info.gradient} opacity-0 group-hover:opacity-100 rounded-[2.5rem] blur-md transition-opacity duration-700`} />
+
+                    <div className="relative p-12 rounded-[2.5rem] bg-[#12121e]/40 border border-white/5 backdrop-blur-3xl h-full flex flex-col items-center text-center transition-all duration-500 group-hover:bg-[#12121e]/60 group-hover:border-purple-500/30">
+                      <div className="p-6 rounded-[2rem] bg-purple-500/10 mb-8 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                        <info.icon className="h-10 w-10 text-purple-400" />
+                      </div>
+
+                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-purple-500/60 block mb-4">{info.label}</span>
+                      <h3 className="text-3xl font-black mb-4 tracking-tighter text-white">{info.title}</h3>
+                      <p className="text-gray-400 text-lg font-medium leading-relaxed max-w-[200px]">{info.value}</p>
+
+                      {/* Decorative "Satellite" Lines */}
+                      <div className="mt-10 pt-8 border-t border-white/5 w-full flex items-center justify-center space-x-2 opacity-30 group-hover:opacity-100 transition-opacity">
+                        <div className="h-1 w-1 bg-purple-500 rounded-full" />
+                        <div className="h-[1px] w-12 bg-gradient-to-r from-purple-500 to-transparent" />
+                      </div>
+                    </div>
                   </motion.div>
                 </ScrollReveal>
               ))}
@@ -183,60 +205,111 @@ export const Contact = () => {
         </section>
 
         {/* Social Nexus */}
-        <section className="py-20 px-6">
-          <div className="max-w-4xl mx-auto text-center">
+        <section className="py-32 px-6 relative overflow-hidden">
+          <div className="max-w-5xl mx-auto">
             <ScrollReveal>
-              <h2 className="text-4xl font-black mb-12 tracking-tight">Social Nexus</h2>
-              <div className="flex justify-center flex-wrap gap-8">
-                {[
-                  { icon: Instagram, label: 'Instagram', color: 'hover:text-pink-500' },
-                  { icon: Twitter, label: 'Twitter', color: 'hover:text-blue-400' },
-                  { icon: Linkedin, label: 'LinkedIn', color: 'hover:text-blue-600' },
-                  { icon: Github, label: 'GitHub', color: 'hover:text-white' }
-                ].map((social, idx) => (
-                  <motion.a
-                    key={idx}
-                    href="#"
-                    whileHover={{ scale: 1.2, rotate: 10 }}
-                    className={`flex flex-col items-center gap-2 text-gray-500 ${social.color} transition-colors p-4`}
-                  >
-                    <social.icon className="h-8 w-8" />
-                    <span className="text-xs font-bold uppercase tracking-[0.2em]">{social.label}</span>
-                  </motion.a>
-                ))}
+              <div className="relative p-16 rounded-[4rem] bg-gradient-to-br from-white/[0.03] to-transparent border border-white/5 backdrop-blur-md overflow-hidden text-center group">
+                {/* Background Sparkles */}
+                <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none bg-grid-pattern" />
+
+                <h2 className="text-5xl font-black mb-16 tracking-tighter uppercase relative z-10">
+                  <span className="text-gray-500">Social</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-600">Nexus</span>
+                </h2>
+
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-12 relative z-10">
+                  {[
+                    { icon: Instagram, label: 'Instagram', color: 'group-hover:text-pink-500', bg: 'bg-pink-500/10' },
+                    { icon: Twitter, label: 'Twitter', color: 'group-hover:text-blue-400', bg: 'bg-blue-400/10' },
+                    { icon: Linkedin, label: 'LinkedIn', color: 'group-hover:text-blue-600', bg: 'bg-blue-600/10' },
+                    { icon: Github, label: 'GitHub', color: 'group-hover:text-white', bg: 'bg-white/10' }
+                  ].map((social, idx) => (
+                    <motion.a
+                      key={idx}
+                      href="#"
+                      whileHover={{ scale: 1.1, y: -5 }}
+                      className="flex flex-col items-center gap-4 group/social"
+                    >
+                      <div className={`p-6 rounded-3xl bg-white/[0.03] border border-white/5 transition-all duration-300 group-hover/social:${social.bg} group-hover/social:border-white/20 group-hover/social:shadow-2xl group-hover/social:shadow-black`}>
+                        <social.icon className="h-10 w-10 text-gray-400 transition-colors duration-300 group-hover/social:text-white" />
+                      </div>
+                      <span className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-500 group-hover/social:text-white transition-colors">
+                        {social.label}
+                      </span>
+                    </motion.a>
+                  ))}
+                </div>
               </div>
             </ScrollReveal>
           </div>
         </section>
 
         {/* Stellar FAQ Section */}
-        <section className="py-32 px-6">
-          <div className="max-w-4xl mx-auto">
+        <section className="py-40 px-6 relative overflow-hidden">
+          {/* FAQ Background Glows */}
+          <div className="absolute top-[20%] left-[-10%] w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[150px] pointer-events-none" />
+          <div className="absolute bottom-[20%] right-[-10%] w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[130px] pointer-events-none" />
+
+          <div className="max-w-4xl mx-auto relative z-10">
             <ScrollReveal>
-              <div className="text-center mb-20">
-                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6 backdrop-blur-md">
-                  <Sparkles className="h-4 w-4 text-purple-400 animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-purple-400">Knowledge Base</span>
+              <div className="text-center mb-24">
+                <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 mb-8 backdrop-blur-md">
+                  <div className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                  </div>
+                  <span className="text-xs font-black uppercase tracking-[0.3em] text-purple-400">Knowledge Retrieving</span>
                 </div>
-                <h2 className="text-6xl font-black tracking-tighter mb-4 italic">F.A.Q.</h2>
-                <p className="text-xl text-gray-500 font-medium tracking-tight">Rapid access to campus intelligence.</p>
+                <h2 className="text-6xl md:text-8xl font-black tracking-tighter mb-6 uppercase">
+                  F.<span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-fuchsia-600">A</span>.Q.
+                </h2>
+                <p className="text-xl text-gray-400 font-medium tracking-tight max-w-xl mx-auto leading-relaxed">
+                  Decrypted answers to the most common queries in our sector of the galaxy.
+                </p>
               </div>
             </ScrollReveal>
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               {[
-                { q: "How does the AI process my documents?", a: "Our proprietary neural engine semanticizes your data, enabling ultra-low latency natural language retrieval." },
-                { q: "Is orbital data transmission secure?", a: "All data streams are shielded by end-to-end quantum-resistant encryption across all cloud nodes." },
-                { q: "Can I jump between portals instantly?", a: "Seamless role-switching is enabled for authenticated users across all campus modules." }
+                {
+                  q: "How does the AI process my documents?",
+                  a: "Our proprietary neural engine semanticizes your data, enabling ultra-low latency natural language retrieval.",
+                  tag: "SATHI-CORE"
+                },
+                {
+                  q: "Is orbital data transmission secure?",
+                  a: "All data streams are shielded by end-to-end quantum-resistant encryption across all cloud nodes.",
+                  tag: "SECURITY"
+                },
+                {
+                  q: "Can I jump between portals instantly?",
+                  a: "Seamless role-switching is enabled for authenticated users across all campus modules.",
+                  tag: "NAVIGATION"
+                }
               ].map((faq, i) => (
                 <ScrollReveal key={i} delay={i * 0.1}>
-                  <div className="p-10 rounded-[2.5rem] bg-[#12121e]/50 border border-white/5 hover:border-purple-500/30 backdrop-blur-xl transition-all duration-300 group">
-                    <h3 className="text-2xl font-bold mb-4 flex items-center tracking-tight">
-                      <Sparkles className="h-5 w-5 text-purple-400 mr-4" />
-                      {faq.q}
-                    </h3>
-                    <p className="text-gray-500 text-lg leading-relaxed pl-9">{faq.a}</p>
-                  </div>
+                  <motion.div
+                    whileHover={{ scale: 1.01, x: 5 }}
+                    className="group relative"
+                  >
+                    <div className="absolute -inset-[1px] bg-gradient-to-r from-purple-500/20 to-transparent rounded-[2rem] opacity-0 group-hover:opacity-100 blur-sm transition-opacity" />
+
+                    <div className="relative p-10 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/20 backdrop-blur-3xl transition-all duration-500">
+                      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                        <div className="flex-1">
+                          <h3 className="text-2xl font-black mb-4 flex items-start tracking-tight group-hover:text-purple-400 transition-colors">
+                            <span className="text-purple-600 mr-4 font-serif text-3xl opacity-50">Q.</span>
+                            {faq.q}
+                          </h3>
+                          <p className="text-gray-500 text-lg leading-relaxed pl-12 font-medium">{faq.a}</p>
+                        </div>
+                        <div className="shrink-0 flex md:flex-col items-center gap-4">
+                          <span className="px-3 py-1 rounded-lg bg-white/[0.05] border border-white/5 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                            {faq.tag}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </ScrollReveal>
               ))}
             </div>
