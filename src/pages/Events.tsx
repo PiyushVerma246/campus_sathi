@@ -17,7 +17,7 @@ const events = [
         date: "March 15-17, 2024",
         time: "48 Hours",
         location: "Innovation Hub",
-        image: "https://images.unsplash.com/photo-1504384308090-c54be3855833?auto=format&fit=crop&q=80&w=800",
+        image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800",
         description: "The annual flagship hackathon. Build the future with AI, Blockchain, and IoT. Over $10k in prizes.",
         attendees: "500+"
     },
@@ -315,7 +315,7 @@ export const Events = () => {
                         </Tabs>
                     </ScrollReveal>
 
-                    {/* Enhanced Events Grid */}
+                    {/* Enhanced Events Grid with Modern Aesthetic Cards */}
                     <motion.div
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                         initial="hidden"
@@ -329,107 +329,180 @@ export const Events = () => {
                         }}
                     >
                         {filteredEvents.map((event, index) => {
-                            // Category-specific colors
-                            const categoryColors = {
-                                'Hackathon': 'from-blue-500/20 to-cyan-500/20',
-                                'Cultural': 'from-purple-500/20 to-pink-500/20',
-                                'Tech': 'from-cyan-500/20 to-blue-500/20',
-                                'Workshops': 'from-green-500/20 to-emerald-500/20',
-                                'Business': 'from-orange-500/20 to-red-500/20'
+                            // Category-specific gradient colors
+                            const categoryGradients = {
+                                'Hackathon': 'from-blue-500 via-cyan-500 to-teal-500',
+                                'Cultural': 'from-purple-500 via-pink-500 to-rose-500',
+                                'Tech': 'from-cyan-500 via-blue-500 to-indigo-500',
+                                'Workshops': 'from-green-500 via-emerald-500 to-teal-500',
+                                'Business': 'from-orange-500 via-amber-500 to-yellow-500'
                             };
 
-                            const categoryBorderColors = {
-                                'Hackathon': 'group-hover:border-blue-500/50',
-                                'Cultural': 'group-hover:border-purple-500/50',
-                                'Tech': 'group-hover:border-cyan-500/50',
-                                'Workshops': 'group-hover:border-green-500/50',
-                                'Business': 'group-hover:border-orange-500/50'
+                            const categoryAccents = {
+                                'Hackathon': 'bg-blue-500',
+                                'Cultural': 'bg-purple-500',
+                                'Tech': 'bg-cyan-500',
+                                'Workshops': 'bg-green-500',
+                                'Business': 'bg-orange-500'
+                            };
+
+                            const categoryGlows = {
+                                'Hackathon': 'group-hover:shadow-blue-500/50',
+                                'Cultural': 'group-hover:shadow-purple-500/50',
+                                'Tech': 'group-hover:shadow-cyan-500/50',
+                                'Workshops': 'group-hover:shadow-green-500/50',
+                                'Business': 'group-hover:shadow-orange-500/50'
                             };
 
                             return (
                                 <ScrollReveal key={event.id} delay={index * 0.1}>
                                     <motion.div
-                                        whileHover={{ y: -12, scale: 1.02 }}
-                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                        whileHover={{ y: -16, scale: 1.03 }}
+                                        transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
                                         className="h-full"
                                     >
-                                        <Card className={`bg-gradient-to-br from-foreground/[0.03] to-foreground/[0.01] border-foreground/10 ${categoryBorderColors[event.category as keyof typeof categoryBorderColors]} backdrop-blur-xl overflow-hidden rounded-3xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-500 group h-full flex flex-col relative`}>
-                                            {/* Animated gradient overlay */}
-                                            <div className={`absolute inset-0 bg-gradient-to-br ${categoryColors[event.category as keyof typeof categoryColors]} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+                                        <Card className={`relative overflow-hidden rounded-[2rem] border-0 h-full flex flex-col group bg-gradient-to-br from-background/80 via-background/60 to-background/40 backdrop-blur-2xl shadow-xl hover:shadow-3xl ${categoryGlows[event.category as keyof typeof categoryGlows]} transition-all duration-700`}>
+                                            {/* Glassmorphism overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] via-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
-                                            {/* Image Section */}
-                                            <div className="relative h-72 overflow-hidden">
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-10" />
-                                                <motion.img
-                                                    src={event.image}
-                                                    alt={event.title}
-                                                    className="w-full h-full object-cover"
-                                                    whileHover={{ scale: 1.15 }}
-                                                    transition={{ duration: 0.6 }}
-                                                />
+                                            {/* Animated gradient border */}
+                                            <div className={`absolute inset-0 rounded-[2rem] bg-gradient-to-r ${categoryGradients[event.category as keyof typeof categoryGradients]} opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-700 pointer-events-none`} />
+                                            <div className={`absolute inset-[1px] rounded-[2rem] bg-gradient-to-br from-background/95 via-background/90 to-background/85 backdrop-blur-2xl`} />
 
-                                                {/* Category Badge */}
-                                                <div className="absolute top-6 left-6 z-20">
-                                                    <Badge className="bg-gradient-to-r from-primary/90 to-purple-500/90 text-white border-0 backdrop-blur-md px-4 py-2 font-bold uppercase tracking-wider text-xs shadow-lg">
-                                                        {event.category}
-                                                    </Badge>
-                                                </div>
+                                            {/* Content wrapper */}
+                                            <div className="relative z-10 flex flex-col h-full">
+                                                {/* Image Section with Creative Treatment */}
+                                                <div className="relative h-64 overflow-hidden rounded-t-[2rem]">
+                                                    {/* Gradient overlay with blur effect */}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent z-10" />
 
-                                                {/* Event Info Overlay */}
-                                                <div className="absolute bottom-6 left-6 right-6 z-20">
+                                                    {/* Image with parallax effect */}
                                                     <motion.div
-                                                        className="flex items-center text-white/90 text-sm font-semibold mb-3 gap-2"
-                                                        whileHover={{ x: 5 }}
+                                                        className="absolute inset-0"
+                                                        whileHover={{ scale: 1.1 }}
+                                                        transition={{ duration: 0.8, ease: "easeOut" }}
                                                     >
-                                                        <Clock className="h-4 w-4" />
-                                                        {event.time}
+                                                        <img
+                                                            src={event.image}
+                                                            alt={event.title}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        {/* Color overlay matching category */}
+                                                        <div className={`absolute inset-0 bg-gradient-to-br ${categoryGradients[event.category as keyof typeof categoryGradients]} opacity-20 mix-blend-overlay`} />
                                                     </motion.div>
-                                                    <h3 className="text-3xl font-black text-white leading-tight tracking-tight mb-2">
-                                                        {event.title}
-                                                    </h3>
-                                                </div>
-                                            </div>
 
-                                            {/* Content Section */}
-                                            <CardContent className="p-8 flex-1 space-y-5 relative z-10">
-                                                <div className="flex items-center justify-between gap-4">
+                                                    {/* Floating Category Badge */}
                                                     <motion.div
-                                                        className="flex items-center text-foreground/70 text-sm font-semibold gap-2"
+                                                        className="absolute top-5 right-5 z-20"
+                                                        whileHover={{ scale: 1.1, rotate: 5 }}
+                                                        transition={{ duration: 0.3 }}
+                                                    >
+                                                        <div className={`relative px-4 py-2 rounded-2xl bg-gradient-to-r ${categoryGradients[event.category as keyof typeof categoryGradients]} shadow-2xl`}>
+                                                            <div className="absolute inset-0 bg-white/20 rounded-2xl backdrop-blur-md" />
+                                                            <span className="relative text-white font-black uppercase tracking-widest text-[10px]">
+                                                                {event.category}
+                                                            </span>
+                                                        </div>
+                                                    </motion.div>
+
+                                                    {/* Attendee Count Badge */}
+                                                    <motion.div
+                                                        className="absolute top-5 left-5 z-20"
+                                                        whileHover={{ scale: 1.1 }}
+                                                        transition={{ duration: 0.3 }}
+                                                    >
+                                                        <div className="relative px-4 py-2 rounded-2xl bg-background/40 backdrop-blur-xl border border-white/10 shadow-xl">
+                                                            <div className="flex items-center gap-2">
+                                                                <Users className="h-4 w-4 text-primary" />
+                                                                <span className="text-white font-bold text-sm">{event.attendees}</span>
+                                                            </div>
+                                                        </div>
+                                                    </motion.div>
+
+                                                    {/* Decorative accent line */}
+                                                    <motion.div
+                                                        className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${categoryGradients[event.category as keyof typeof categoryGradients]} z-20`}
+                                                        initial={{ scaleX: 0 }}
+                                                        whileInView={{ scaleX: 1 }}
+                                                        transition={{ duration: 0.8, delay: index * 0.1 }}
+                                                    />
+                                                </div>
+
+                                                {/* Content Section with Enhanced Layout */}
+                                                <CardContent className="p-7 flex-1 flex flex-col space-y-5">
+                                                    {/* Title */}
+                                                    <motion.h3
+                                                        className="text-2xl font-black tracking-tight leading-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent group-hover:from-primary group-hover:to-purple-500 transition-all duration-500"
                                                         whileHover={{ x: 3 }}
                                                     >
-                                                        <Calendar className="h-5 w-5 text-primary" />
-                                                        {event.date}
-                                                    </motion.div>
+                                                        {event.title}
+                                                    </motion.h3>
+
+                                                    {/* Time Badge with Icon */}
                                                     <motion.div
-                                                        className="flex items-center text-foreground/70 text-sm font-semibold gap-2"
-                                                        whileHover={{ scale: 1.1 }}
+                                                        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-foreground/5 to-foreground/[0.02] border border-foreground/10 backdrop-blur-sm w-fit"
+                                                        whileHover={{ scale: 1.05, x: 5 }}
+                                                        transition={{ duration: 0.3 }}
                                                     >
-                                                        <Users className="h-5 w-5 text-primary" />
-                                                        {event.attendees}
+                                                        <Clock className="h-4 w-4 text-primary" />
+                                                        <span className="text-sm font-bold text-foreground/80">{event.time}</span>
                                                     </motion.div>
-                                                </div>
 
-                                                <motion.div
-                                                    className="flex items-start text-foreground/70 text-sm font-semibold gap-2"
-                                                    whileHover={{ x: 3 }}
-                                                >
-                                                    <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                                                    {event.location}
-                                                </motion.div>
+                                                    {/* Info Grid */}
+                                                    <div className="grid grid-cols-1 gap-3">
+                                                        <motion.div
+                                                            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-primary/5 to-transparent border border-primary/10 backdrop-blur-sm"
+                                                            whileHover={{ x: 5, backgroundColor: "rgba(var(--primary), 0.1)" }}
+                                                            transition={{ duration: 0.3 }}
+                                                        >
+                                                            <div className={`p-2 rounded-lg ${categoryAccents[event.category as keyof typeof categoryAccents]}/10`}>
+                                                                <Calendar className="h-4 w-4 text-primary" />
+                                                            </div>
+                                                            <span className="text-sm font-semibold text-foreground/70">{event.date}</span>
+                                                        </motion.div>
 
-                                                <p className="text-foreground/60 text-base leading-relaxed line-clamp-3">
-                                                    {event.description}
-                                                </p>
-                                            </CardContent>
+                                                        <motion.div
+                                                            className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/5 to-transparent border border-purple-500/10 backdrop-blur-sm"
+                                                            whileHover={{ x: 5, backgroundColor: "rgba(168, 85, 247, 0.1)" }}
+                                                            transition={{ duration: 0.3 }}
+                                                        >
+                                                            <div className="p-2 rounded-lg bg-purple-500/10">
+                                                                <MapPin className="h-4 w-4 text-purple-500" />
+                                                            </div>
+                                                            <span className="text-sm font-semibold text-foreground/70">{event.location}</span>
+                                                        </motion.div>
+                                                    </div>
 
-                                            {/* Footer with CTA */}
-                                            <CardFooter className="p-8 pt-0 relative z-10">
-                                                <Button className="w-full h-14 rounded-2xl bg-gradient-to-r from-foreground to-foreground/90 text-background hover:from-primary hover:to-purple-500 hover:text-white font-bold tracking-wide transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-xl group-hover:shadow-primary/30 text-base">
-                                                    <Ticket className="h-5 w-5 mr-2" />
-                                                    Register Now
-                                                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                                                </Button>
-                                            </CardFooter>
+                                                    {/* Description */}
+                                                    <p className="text-sm text-foreground/60 leading-relaxed line-clamp-2 flex-1">
+                                                        {event.description}
+                                                    </p>
+                                                </CardContent>
+
+                                                {/* Footer with Enhanced CTA */}
+                                                <CardFooter className="p-7 pt-0">
+                                                    <motion.div
+                                                        className="w-full"
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                    >
+                                                        <Button className={`w-full h-14 rounded-2xl bg-gradient-to-r ${categoryGradients[event.category as keyof typeof categoryGradients]} text-white font-black tracking-wide transition-all duration-500 shadow-lg hover:shadow-2xl ${categoryGlows[event.category as keyof typeof categoryGlows]} border-0 relative overflow-hidden group/btn`}>
+                                                            {/* Shine effect */}
+                                                            <motion.div
+                                                                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                                                                initial={{ x: "-100%" }}
+                                                                whileHover={{ x: "100%" }}
+                                                                transition={{ duration: 0.6 }}
+                                                            />
+                                                            <span className="relative flex items-center justify-center gap-2">
+                                                                <Ticket className="h-5 w-5" />
+                                                                Register Now
+                                                                <ArrowRight className="h-5 w-5 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                                                            </span>
+                                                        </Button>
+                                                    </motion.div>
+                                                </CardFooter>
+                                            </div>
                                         </Card>
                                     </motion.div>
                                 </ScrollReveal>
