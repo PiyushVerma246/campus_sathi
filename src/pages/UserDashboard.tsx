@@ -1,239 +1,294 @@
 import { useState, useRef, useEffect } from 'react';
-import { useData, ChatMessage } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/hooks/useLanguage';
-import { Navigation } from '@/components/Navigation';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send, Upload, FileText, Paperclip, Sparkles, Layout, Calendar, Shield, Cpu, BookOpen } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { Brain, Send, User, LogOut, Sparkles, MessageSquare, Zap, Shield, Activity, Calendar, Package, FileUp, Cpu, Globe, ArrowRight, Bot, Command } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Navigation } from '@/components/Navigation';
 import { ScrollReveal } from '@/components/ScrollReveal';
 
+interface Message {
+  role: 'user' | 'bot';
+  content: string;
+  time: string;
+}
+
 export const UserDashboard = () => {
-  const { user } = useAuth();
-  const { t } = useLanguage();
-  const { addChatMessage, searchInstitutionalData, chatMessages } = useData();
-  const [message, setMessage] = useState('');
+  const { user, logout } = useAuth();
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'bot', content: "SYSTEM_READY: Greetings, Agent. I am Campus Sathi Core. How may I assist your traversal through the institutional matrix today?", time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+  ]);
+  const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const [userMessages, setUserMessages] = useState<ChatMessage[]>([]);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const filtered = chatMessages.filter(msg => msg.userId === user?.id || !msg.userId);
-    setUserMessages(filtered);
-  }, [chatMessages, user?.id]);
-
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [userMessages, isTyping]);
+  }, [messages]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!message.trim()) return;
-    const userMessage = message.trim();
-    setMessage('');
-    addChatMessage({ content: userMessage, isUser: true, userId: user?.id });
+  const handleSend = async () => {
+    if (!input.trim()) return;
+
+    const userMsg: Message = {
+      role: 'user',
+      content: input,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    setMessages(prev => [...prev, userMsg]);
+    setInput("");
     setIsTyping(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    let response = searchInstitutionalData(userMessage);
-    const botResponse = response ? `📚 Contextual retrieval successful:\n\n${response}` : "I'm processing your inquiry. For more specific results, try uploading relevant institutional documents.";
-    addChatMessage({ content: botResponse, isUser: false, userId: user?.id });
+
+    // Simulate AI response
+    await new Promise(r => setTimeout(r, 1500));
+    const botMsg: Message = {
+      role: 'bot',
+      content: "DATA_RESPONSE: Request acknowledged. Processing query through neural nodes. Synchronizing relevant institutional documentation...",
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+    setMessages(prev => [...prev, botMsg]);
     setIsTyping(false);
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files) return;
-    Array.from(files).forEach(file => {
-      toast({ title: "Neural Sync Complete", description: `${file.name} is now part of the knowledge base.` });
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-sans">
+    <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-purple-500/30 overflow-hidden font-sans">
       <Navigation />
 
-      <div className="max-w-[1600px] mx-auto px-6 pt-28 pb-10">
-        <ScrollReveal>
-          {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 border-b border-foreground/5 pb-8">
-            <div>
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-3">
-                <Layout className="h-3 w-3 text-primary animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Workspace Active</span>
+      {/* Deep Space Background Effects */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 z-0">
+          <div className="stars absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-pulse" />
+        </div>
+
+        {/* Nebula Glows */}
+        <div className="nebula-glow top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/10 animate-orb" />
+        <div className="nebula-glow bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-900/10 animate-orb" style={{ animationDelay: '5s' }} />
+
+        <div className="absolute inset-0 neural-grid opacity-[0.05]" />
+      </div>
+
+      <div className="relative z-10 pt-24 h-[calc(100vh-1rem)] flex flex-col md:flex-row p-6 gap-6">
+        {/* Left Sidebar - Agent Information & Gateways */}
+        <aside className="w-full md:w-80 flex flex-col gap-6">
+          <ScrollReveal width="100%">
+            <div className="glass-morphism rounded-[2.5rem] p-8 border-white/5 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-purple-600/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-purple-600/10 transition-all" />
+
+              <div className="flex flex-col items-center text-center mb-8">
+                <div className="relative mb-6">
+                  <div className="absolute -inset-4 bg-purple-600/20 rounded-full blur-xl animate-pulse" />
+                  <div className="relative h-24 w-24 rounded-full bg-white/[0.03] border border-white/10 p-1">
+                    <div className="h-full w-full rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-4xl font-black italic">
+                      {user?.username?.[0].toUpperCase()}
+                    </div>
+                  </div>
+                  <div className="absolute bottom-1 right-1 h-6 w-6 rounded-full bg-emerald-500 border-4 border-[#0a0a0f] animate-pulse" />
+                </div>
+                <h3 className="text-2xl font-black uppercase tracking-tighter mb-1 select-none">Agent_{user?.username}</h3>
+                <Badge variant="outline" className="bg-purple-600/10 text-purple-400 border-purple-500/20 font-black uppercase tracking-[0.2em] text-[8px] italic">
+                  Operational_Status: ACTIVE
+                </Badge>
               </div>
-              <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-2">
-                Welcome back, <span className="text-primary">{user?.username}</span>
-              </h1>
-              <p className="text-foreground/60 text-sm font-medium">Here's what's happening on your campus today</p>
-            </div>
-            <div className="text-right">
-              <p className="text-foreground/40 text-xs font-bold uppercase tracking-widest bg-foreground/5 px-4 py-2 rounded-lg">
-                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-              </p>
-            </div>
-          </div>
-        </ScrollReveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* Left Section - Campus Sathi Core (AI Assistant) */}
-          <div className="lg:col-span-8 h-full">
-            <ScrollReveal delay={0.1} className="h-full">
-              <Card className="h-[calc(100vh-280px)] min-h-[600px] flex flex-col bg-foreground/[0.02] border-foreground/10 backdrop-blur-3xl rounded-[2rem] shadow-sm overflow-hidden group hover:border-foreground/20 transition-all duration-500">
-                <CardHeader className="bg-transparent border-b border-foreground/5 py-6 px-8">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-primary/10 rounded-xl border border-primary/20">
-                      <Sparkles className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-bold tracking-tight">Campus Sathi Core</h2>
-                      <p className="text-xs text-foreground/50 font-medium">Your AI assistant for campus information</p>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="flex-1 flex flex-col p-0 overflow-hidden relative">
-                  <ScrollArea className="flex-1 px-8 py-8" ref={scrollAreaRef}>
-                    <div className="space-y-6 max-w-4xl mx-auto">
-                      {userMessages.length === 0 && (
-                        <div className="flex flex-col items-center justify-center min-h-[300px] text-center opacity-50">
-                          <Cpu className="h-16 w-16 text-foreground/20 mb-6" />
-                          <h3 className="text-xl font-bold text-foreground/40">Ready to assist</h3>
-                          <p className="text-sm text-foreground/30 mt-2 max-w-xs">Ask about schedules, policies, or events to get started.</p>
-                        </div>
-                      )}
-
-                      {userMessages.map((msg) => (
-                        <motion.div
-                          key={msg.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
-                        >
-                          <div className={`max-w-[85%] p-5 rounded-2xl text-sm leading-relaxed ${msg.isUser
-                              ? 'bg-primary text-primary-foreground rounded-tr-sm'
-                              : 'bg-foreground/5 text-foreground/90 rounded-tl-sm border border-foreground/5'
-                            }`}>
-                            {msg.content}
-                          </div>
-                        </motion.div>
-                      ))}
-
-                      {isTyping && (
-                        <div className="flex justify-start">
-                          <div className="bg-foreground/5 px-6 py-4 rounded-2xl rounded-tl-sm">
-                            <div className="flex space-x-1.5">
-                              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce" />
-                              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce [animation-delay:0.2s]" />
-                              <span className="w-1.5 h-1.5 bg-foreground/40 rounded-full animate-bounce [animation-delay:0.4s]" />
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </ScrollArea>
-
-                  <div className="p-6 bg-background/50 backdrop-blur-md border-t border-foreground/5">
-                    <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto relative group">
-                      <div className="absolute inset-0 bg-primary/20 blur-xl opacity-0 group-focus-within:opacity-20 transition-opacity duration-500 rounded-3xl"></div>
-                      <div className="relative flex items-center bg-background border border-foreground/10 rounded-2xl shadow-sm focus-within:border-primary/30 focus-within:ring-1 focus-within:ring-primary/20 transition-all">
-                        <Input
-                          value={message}
-                          onChange={(e) => setMessage(e.target.value)}
-                          placeholder="Ask anything about your campus..."
-                          className="h-14 border-none bg-transparent focus-visible:ring-0 text-base px-6 placeholder:text-foreground/30"
-                          disabled={isTyping}
-                        />
-                        <div className="flex items-center space-x-2 pr-4">
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="p-2 text-foreground/40 hover:text-foreground hover:bg-foreground/5 rounded-xl transition-colors"
-                          >
-                            <Paperclip className="h-5 w-5" />
-                          </button>
-                          <Button
-                            type="submit"
-                            size="icon"
-                            disabled={!message.trim() || isTyping}
-                            className="h-10 w-10 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg transition-transform active:scale-95"
-                          >
-                            <Send className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </form>
-                    <div className="text-center mt-3">
-                      <span className="text-[10px] text-foreground/30 uppercase tracking-widest font-semibold">AI Assistant may produce inaccurate information</span>
-                    </div>
-                  </div>
-                  <input type="file" ref={fileInputRef} onChange={handleFileUpload} className="hidden" />
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-          </div>
-
-          {/* Right Section - Quick Access & Neural Sync */}
-          <div className="lg:col-span-4 space-y-6">
-            <ScrollReveal direction="right" delay={0.2}>
-              <div className="space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-foreground/40 mb-4 pl-1">Quick Access Panel</h3>
+              <div className="space-y-4 pt-8 border-t border-white/5">
                 {[
-                  { title: "Policy Inquiry", sub: "Rules, regulations, attendance", icon: Shield },
-                  { title: "Resource Allocation", sub: "Labs, equipment, facilities", icon: Cpu },
-                  { title: "Exam Schedules", sub: "Dates, venues, notices", icon: Calendar },
-                  { title: "Campus Events", sub: "Upcoming and ongoing", icon: Layout },
-                ].map((item, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setMessage(item.title)}
-                    className="w-full text-left p-4 rounded-2xl bg-foreground/[0.02] border border-foreground/10 hover:border-primary/30 hover:bg-foreground/[0.04] transition-all group flex items-center space-x-4 hover:translate-x-1"
-                  >
-                    <div className="p-3 bg-background rounded-xl border border-foreground/5 group-hover:border-primary/20 group-hover:text-primary transition-colors text-foreground/60">
-                      <item.icon className="h-5 w-5" />
+                  { label: "Sync Rate", value: "99.9%", icon: Activity, color: "text-purple-400" },
+                  { label: "Neural Tier", value: "Level 4", icon: Shield, color: "text-blue-400" },
+                  { label: "Active Nodes", value: "14", icon: Cpu, color: "text-emerald-400" },
+                ].map((stat, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/[0.02] transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">{stat.label}</span>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-sm text-foreground/90">{item.title}</h4>
-                      <p className="text-xs text-foreground/50 font-medium">{item.sub}</p>
-                    </div>
-                  </button>
+                    <span className="text-xs font-black italic">{stat.value}</span>
+                  </div>
                 ))}
               </div>
+
+              <Button
+                onClick={logout}
+                variant="ghost"
+                className="w-full mt-8 h-12 rounded-xl border border-white/5 hover:bg-red-500/10 hover:text-red-400 font-black uppercase tracking-widest text-[10px] transition-all"
+              >
+                <LogOut className="mr-3 h-4 w-4" />
+                De-authorize Session
+              </Button>
+            </div>
+          </ScrollReveal>
+
+          <ScrollReveal delay={0.1} width="100%">
+            <div className="glass-morphism rounded-[2.5rem] p-8 border-white/5">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500 mb-6 italic ml-2">Neural_Gateways</h4>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: Calendar, label: "Events", path: "/events" },
+                  { icon: Package, label: "Found", path: "/lost-and-found" },
+                  { icon: Globe, label: "Portal", path: "/" },
+                  { icon: MessageSquare, label: "Core", path: "/dashboard" },
+                ].map((link, i) => (
+                  <motion.div
+                    key={i}
+                    whileHover={{ scale: 1.02 }}
+                    className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-purple-500/30 transition-all cursor-pointer group text-center"
+                    onClick={() => window.location.href = link.path}
+                  >
+                    <link.icon className="h-6 w-6 mx-auto mb-2 text-purple-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-[8px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">{link.label}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
+        </aside>
+
+        {/* Main Content - Chat Interface */}
+        <main className="flex-1 flex flex-col gap-6">
+          <ScrollReveal delay={0.2} width="100%" className="flex-1 flex flex-col min-h-0">
+            <div className="flex-1 glass-morphism rounded-[3rem] border-white/5 flex flex-col overflow-hidden relative group/chat min-h-0">
+              <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.01] shrink-0">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <div className="absolute -inset-2 bg-purple-600/20 rounded-full blur-lg animate-pulse" />
+                    <div className="relative p-3 rounded-2xl bg-purple-600/10 border border-purple-500/20">
+                      <Bot className="h-6 w-6 text-purple-400" />
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-tighter italic">Campus_Sathi_Core</h2>
+                    <div className="flex items-center space-x-2">
+                      <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-[8px] font-black uppercase tracking-[0.2em] text-emerald-500">Neural Lattice Online</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Badge className="bg-white/5 hover:bg-white/10 text-white border-white/10 backdrop-blur-md px-4 py-1.5 font-black uppercase tracking-[0.2em] text-[10px] italic">
+                    v2.4.0_Stable
+                  </Badge>
+                  <div className="p-3 cursor-pointer hover:bg-white/5 rounded-2xl transition-all border border-transparent hover:border-white/10">
+                    <Command className="h-5 w-5 text-gray-500" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Messages Area */}
+              <div
+                ref={scrollRef}
+                className="flex-1 overflow-y-auto p-10 space-y-8 scrollbar-hide min-h-0"
+              >
+                <AnimatePresence>
+                  {messages.map((msg, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`max-w-[80%] flex items-start space-x-4 ${msg.role === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                        <div className={`p-2 rounded-xl ${msg.role === 'user' ? 'bg-purple-600' : 'bg-white/5 border border-white/10'}`}>
+                          {msg.role === 'user' ? <User className="h-4 w-4 text-white" /> : <Bot className="h-4 w-4 text-purple-400" />}
+                        </div>
+                        <div className={`p-6 rounded-[2rem] ${msg.role === 'user'
+                          ? 'bg-purple-600 text-white shadow-2xl shadow-purple-900/20 rounded-tr-none'
+                          : 'glass-morphism border-white/10 text-gray-100 rounded-tl-none'
+                          }`}>
+                          <p className="text-sm font-medium leading-relaxed tracking-wide">
+                            {msg.content}
+                          </p>
+                          <div className={`mt-3 text-[8px] font-black uppercase tracking-widest ${msg.role === 'user' ? 'text-white/50' : 'text-gray-500'}`}>
+                            {msg.time}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                  {isTyping && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                      <div className="flex items-center space-x-4">
+                        <div className="p-2 rounded-xl bg-white/5 border border-white/10">
+                          <Bot className="h-4 w-4 text-purple-400" />
+                        </div>
+                        <div className="glass-morphism border-white/10 p-4 rounded-2xl rounded-tl-none flex gap-1">
+                          <div className="h-1.5 w-1.5 bg-purple-400 rounded-full animate-bounce" />
+                          <div className="h-1.5 w-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.2s]" />
+                          <div className="h-1.5 w-1.5 bg-purple-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Input Area */}
+              <div className="p-8 bg-white/[0.01] border-t border-white/5 shrink-0">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-[2rem] opacity-0 group-focus-within:opacity-20 blur transition-opacity" />
+                  <Input
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                    placeholder="ENTER NEURAL COMMAND..."
+                    className="h-20 rounded-[2rem] bg-white/[0.02] border-white/10 focus:border-purple-500/50 pl-20 pr-32 text-lg font-medium transition-all"
+                  />
+                  <div className="absolute left-8 top-1/2 -translate-y-1/2">
+                    <Zap className="h-6 w-6 text-purple-400 opacity-50 group-focus-within:opacity-100 transition-opacity" />
+                  </div>
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Button
+                      onClick={handleSend}
+                      disabled={!input.trim()}
+                      className="h-14 px-8 rounded-2xl bg-white text-black hover:bg-purple-600 hover:text-white font-black uppercase tracking-widest text-xs transition-all duration-500"
+                    >
+                      INITIALIZE <ArrowRight className="ml-3 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center justify-center space-x-6 text-[8px] font-black uppercase tracking-[0.4em] text-gray-600">
+                  <span>Press ENTER for Burst Transmission</span>
+                  <div className="h-1 w-1 bg-gray-700 rounded-full" />
+                  <span>Neural Encryption Active</span>
+                </div>
+              </div>
+            </div>
+          </ScrollReveal>
+
+          {/* Quick Actions / Integration */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+            <ScrollReveal delay={0.3} width="100%">
+              <div className="glass-morphism rounded-[2.5rem] p-8 border-white/5 flex items-center justify-between group cursor-pointer hover:border-purple-500/30 transition-all">
+                <div className="flex items-center space-x-6">
+                  <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 group-hover:bg-purple-500/10 group-hover:border-purple-500/30 transition-all">
+                    <FileUp className="h-8 w-8 text-purple-400" />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-black uppercase tracking-tighter mb-1">Neural_Sync</h4>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Upload documents for analysis</p>
+                  </div>
+                </div>
+                <ArrowRight className="h-6 w-6 text-gray-500 group-hover:text-white group-hover:translate-x-2 transition-all" />
+              </div>
             </ScrollReveal>
 
-            <ScrollReveal direction="right" delay={0.3}>
-              <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20 rounded-[2rem] p-6 mt-8 overflow-hidden relative">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 blur-[50px] rounded-full -mr-10 -mt-10 pointer-events-none"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="p-2 bg-primary/20 rounded-lg">
-                      <Upload className="h-5 w-5 text-primary" />
-                    </div>
-                    <h3 className="font-bold text-lg">Neural Sync</h3>
+            <ScrollReveal delay={0.4} width="100%">
+              <div className="glass-morphism rounded-[2.5rem] p-8 border-white/5 flex items-center justify-between group cursor-pointer hover:border-blue-500/30 transition-all">
+                <div className="flex items-center space-x-6">
+                  <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 group-hover:bg-blue-500/10 group-hover:border-blue-500/30 transition-all">
+                    <Sparkles className="h-8 w-8 text-blue-400" />
                   </div>
-                  <p className="text-sm text-foreground/60 mb-6 leading-relaxed">
-                    Upload documents to enhance your personal knowledge context.
-                  </p>
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full bg-background border border-foreground/10 text-foreground hover:text-primary hover:border-primary/50 shadow-sm"
-                  >
-                    Upload Documents
-                  </Button>
-                  <p className="text-[10px] text-foreground/30 mt-4 text-center font-medium">
-                    Supported: PDF, DOCX, TXT
-                  </p>
+                  <div>
+                    <h4 className="text-xl font-black uppercase tracking-tighter mb-1">Smart_Filters</h4>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Customize operational view</p>
+                  </div>
                 </div>
-              </Card>
+                <ArrowRight className="h-6 w-6 text-gray-500 group-hover:text-white group-hover:translate-x-2 transition-all" />
+              </div>
             </ScrollReveal>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

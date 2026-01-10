@@ -1,250 +1,338 @@
 import { useState } from 'react';
-import { useData, InstitutionalData } from '@/contexts/DataContext';
-import { useLanguage } from '@/hooks/useLanguage';
-import { Navigation } from '@/components/Navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Edit2, Trash2, FileText, AlertCircle, HelpCircle, MessageSquare, Shield, Activity, Database, Sparkles, ArrowRight, X } from 'lucide-react';
-import { toast } from '@/hooks/use-toast';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Brain, Plus, Trash2, Edit2, LayoutDashboard, Users, MessageSquare, Database, Activity, Shield, Zap, Cpu, Sparkles, ArrowRight, Bot, Command, Search, Clock } from 'lucide-react';
+import { Navigation } from '@/components/Navigation';
 import { ScrollReveal } from '@/components/ScrollReveal';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface CampusData {
+  id: number;
+  title: string;
+  content: string;
+  category: string;
+  updatedAt: string;
+}
+
+const initialData: CampusData[] = [
+  { id: 1, title: "Library Hours", content: "Mon-Fri: 8AM-10PM, Sat-Sun: 10AM-6PM", category: "Facilities", updatedAt: "2024-03-10" },
+  { id: 2, title: "Academic Calendar", content: "Spring Break starts March 15th. Exam week begins May 1st.", category: "Academic", updatedAt: "2024-03-08" },
+  { id: 3, title: "Hostel Regulations", content: "Curfew: 10:00 PM. Visitors allowed until 8:00 PM.", category: "Administration", updatedAt: "2024-03-12" }
+];
 
 export const AdminDashboard = () => {
-  const { t } = useLanguage();
-  const { institutionalData, addInstitutionalData, updateInstitutionalData, deleteInstitutionalData, chatMessages } = useData();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedNotice, setSelectedNotice] = useState<InstitutionalData | null>(null);
-  const [editingItem, setEditingItem] = useState<InstitutionalData | null>(null);
-  const [formData, setFormData] = useState({ title: '', content: '', type: 'notice' as 'circular' | 'notice' | 'faq' });
+  const { user } = useAuth();
+  const [data, setData] = useState<CampusData[]>(initialData);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<CampusData | null>(null);
+  const [newData, setNewData] = useState({ title: '', content: '', category: 'General' });
 
-  const resetForm = () => { setFormData({ title: '', content: '', type: 'notice' }); setEditingItem(null); };
+  if (user?.role !== 'admin') {
+    return <Navigate to="/login" replace />;
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingItem) {
-      updateInstitutionalData(editingItem.id, formData);
-      toast({ title: "Update Success", description: "Knowledge vector re-indexed successfully." });
-    } else {
-      addInstitutionalData(formData);
-      toast({ title: "Entry Verified", description: "New intelligence node added to knowledge base." });
-    }
-    resetForm(); setIsDialogOpen(false);
+  const handleAdd = () => {
+    const item: CampusData = {
+      id: data.length + 1,
+      ...newData,
+      updatedAt: new Date().toISOString().split('T')[0]
+    };
+    setData([...data, item]);
+    setIsAddDialogOpen(false);
+    setNewData({ title: '', content: '', category: 'General' });
   };
 
-  const handleEdit = (item: InstitutionalData) => {
+  const handleEdit = (item: CampusData) => {
     setEditingItem(item);
-    setFormData({ title: item.title, content: item.content, type: item.type });
-    setIsDialogOpen(true);
+    setNewData({ title: item.title, content: item.content, category: item.category });
+    setIsAddDialogOpen(true);
   };
 
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'circular': return <FileText className="h-4 w-4" />;
-      case 'notice': return <AlertCircle className="h-4 w-4" />;
-      case 'faq': return <HelpCircle className="h-4 w-4" />;
-      default: return <FileText className="h-4 w-4" />;
-    }
+  const handleUpdate = () => {
+    if (!editingItem) return;
+    const updatedData = data.map(item =>
+      item.id === editingItem.id
+        ? { ...item, ...newData, updatedAt: new Date().toISOString().split('T')[0] }
+        : item
+    );
+    setData(updatedData);
+    setIsAddDialogOpen(false);
+    setEditingItem(null);
+    setNewData({ title: '', content: '', category: 'General' });
   };
 
-  const userQueries = chatMessages.filter(msg => msg.isUser);
+  const handleDelete = (id: number) => {
+    setData(data.filter(item => item.id !== id));
+  };
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary/30">
+    <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-purple-500/30 overflow-hidden font-sans">
       <Navigation />
 
-      <div className="max-w-[1600px] mx-auto px-6 pt-40 pb-20">
-        <ScrollReveal>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
-            <div>
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-4">
-                <Shield className="h-3 w-3 text-primary" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">System Override Active</span>
-              </div>
-              <h1 className="text-5xl md:text-7xl font-black tracking-tighter italic">
-                Control <span className="text-primary">Center.</span>
-              </h1>
-            </div>
-            <div className="flex space-x-4">
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button onClick={() => { resetForm(); setIsDialogOpen(true); }} className="h-16 px-8 rounded-2xl bg-white text-black hover:bg-white/90 font-black uppercase tracking-widest text-xs">
-                    <Plus className="h-4 w-4 mr-2" /> {t.addNew}
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl bg-black/90 border-white/10 backdrop-blur-2xl text-white rounded-[2rem] p-10">
-                  <DialogHeader>
-                    <DialogTitle className="text-3xl font-black italic uppercase tracking-tighter">{editingItem ? 'Modify Node' : 'Initialize Node'}</DialogTitle>
-                    <DialogDescription className="text-white/40 font-light">Update the core knowledge vector for the AI assistant.</DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleSubmit} className="space-y-6 mt-6">
-                    <div className="grid grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-2">Node Title</Label>
-                        <Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="h-14 bg-white/5 border-white/10 rounded-xl" required />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-2">Node Type</Label>
-                        <Select value={formData.type} onValueChange={(v: any) => setFormData({ ...formData, type: v })}>
-                          <SelectTrigger className="h-14 bg-white/5 border-white/10 rounded-xl"><SelectValue /></SelectTrigger>
-                          <SelectContent className="bg-black border-white/10 text-white">
-                            <SelectItem value="circular">Circular</SelectItem>
-                            <SelectItem value="notice">Notice</SelectItem>
-                            <SelectItem value="faq">FAQ</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest font-black text-white/40 ml-2">Vector Content</Label>
-                      <Textarea value={formData.content} onChange={(e) => setFormData({ ...formData, content: e.target.value })} className="bg-white/5 border-white/10 rounded-2xl p-6 resize-none" rows={8} required />
-                    </div>
-                    <Button type="submit" className="w-full h-16 rounded-xl bg-primary text-white font-black uppercase tracking-widest">Update Intelligence Hub</Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </div>
-        </ScrollReveal>
+      {/* Deep Space Background Effects */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 z-0">
+          <div className="stars absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-pulse" />
+        </div>
 
-        {/* Dynamic Matrix Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {[
-            { label: "Total Vectors", value: institutionalData.length, icon: Database, color: "text-blue-400" },
-            { label: "Neural Inquiries", value: userQueries.length, icon: Activity, color: "text-primary" },
-            { label: "Matrix Sync", value: "98.4%", icon: Sparkles, color: "text-emerald-400" },
-          ].map((stat, i) => (
-            <ScrollReveal key={i} delay={i * 0.1}>
-              <div className="p-10 rounded-[2.5rem] bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all group overflow-hidden relative">
-                <div className={`absolute top-0 right-0 p-10 opacity-10 transition-transform group-hover:scale-110 ${stat.color}`}>
-                  <stat.icon className="h-24 w-24" />
+        {/* Nebula Glows */}
+        <div className="nebula-glow top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/10 animate-orb" />
+        <div className="nebula-glow bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-900/10 animate-orb" style={{ animationDelay: '5s' }} />
+
+        <div className="absolute inset-0 neural-grid opacity-[0.05]" />
+      </div>
+
+      <div className="relative z-10 pt-32 px-6 pb-20 min-h-screen">
+        <div className="max-w-7xl mx-auto">
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
+            <ScrollReveal width="100%">
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  <div className="absolute -inset-4 bg-purple-600/20 rounded-full blur-xl animate-pulse" />
+                  <div className="relative p-5 rounded-3xl bg-purple-600/10 border border-purple-500/20">
+                    <LayoutDashboard className="h-10 w-10 text-purple-400" />
+                  </div>
                 </div>
-                <div className="relative z-10">
-                  <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/30 block mb-4">{stat.label}</span>
-                  <div className="text-6xl font-black italic tracking-tighter">{stat.value}</div>
+                <div>
+                  <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter italic">Central <span className="text-purple-400">Command.</span></h1>
+                  <div className="flex items-center space-x-3 mt-2">
+                    <div className="h-2 w-2 rounded-full bg-purple-500 animate-ping" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-500">Root Matrix Authorized v2.4.0</span>
+                  </div>
                 </div>
               </div>
             </ScrollReveal>
-          ))}
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8">
-            <ScrollReveal>
-              <Card className="bg-white/[0.03] border-white/10 backdrop-blur-3xl rounded-[2.5rem] overflow-hidden">
-                <CardHeader className="p-10 border-b border-white/5">
-                  <CardTitle className="text-2xl font-black italic uppercase tracking-tighter">Intelligence Hub Management</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                  <div className="divide-y divide-white/5">
-                    {institutionalData.map((item) => (
-                      <div key={item.id} className="p-8 hover:bg-white/[0.02] transition-all group flex flex-col md:flex-row justify-between items-start md:items-center gap-6 cursor-pointer" onClick={() => setSelectedNotice(item)}>
-                        <div className="flex items-start space-x-6">
-                          <div className="p-4 bg-white/5 rounded-2xl group-hover:bg-primary/20 transition-colors">
-                            {getTypeIcon(item.type)}
+            <ScrollReveal delay={0.1} width="100%">
+              <Dialog open={isAddDialogOpen} onOpenChange={(open) => {
+                setIsAddDialogOpen(open);
+                if (!open) {
+                  setEditingItem(null);
+                  setNewData({ title: '', content: '', category: 'General' });
+                }
+              }}>
+                <DialogTrigger asChild>
+                  <Button className="h-16 px-10 rounded-2xl bg-white text-black hover:bg-purple-600 hover:text-white font-black uppercase tracking-widest text-sm transition-all duration-500 shadow-3xl">
+                    <Plus className="mr-3 h-5 w-5" />
+                    Inject Data Node
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px] bg-[#0a0a0f]/95 border-white/10 backdrop-blur-3xl text-white rounded-[2.5rem] p-10">
+                  <DialogHeader className="mb-8">
+                    <DialogTitle className="text-4xl font-black italic tracking-tighter uppercase mb-2">
+                      {editingItem ? 'Update' : 'Initialize'} <span className="text-purple-400">Node.</span>
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-500 font-bold tracking-widest text-[10px] uppercase">MODERATING INSTITUTIONAL INTELLIGENCE MATRIX</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-8">
+                    <div className="space-y-2">
+                      <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Node Title</Label>
+                      <Input
+                        placeholder="e.g. Semester Registration"
+                        value={newData.title}
+                        onChange={(e) => setNewData({ ...newData, title: e.target.value })}
+                        className="bg-white/[0.03] border-white/10 h-14 rounded-xl"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Classification</Label>
+                      <select
+                        className="w-full h-14 bg-white/[0.03] border border-white/10 rounded-xl px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 appearance-none"
+                        value={newData.category}
+                        onChange={(e) => setNewData({ ...newData, category: e.target.value })}
+                      >
+                        <option value="General">GENERAL_LEVEL</option>
+                        <option value="Facilities">FACILITY_NODE</option>
+                        <option value="Academic">ACADEMIC_STREAM</option>
+                        <option value="Administration">ADMIN_PROTOCOL</option>
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Neural Payload (Content)</Label>
+                      <Textarea
+                        placeholder="Input the core data stream here..."
+                        value={newData.content}
+                        onChange={(e) => setNewData({ ...newData, content: e.target.value })}
+                        className="bg-white/[0.03] border-white/10 min-h-[150px] rounded-xl"
+                      />
+                    </div>
+                    <Button
+                      onClick={editingItem ? handleUpdate : handleAdd}
+                      className="w-full h-16 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black uppercase tracking-widest transition-all"
+                    >
+                      {editingItem ? 'Commit Changes' : 'Execute Injection'}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </ScrollReveal>
+          </div>
+
+          {/* Matrix Statistics Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            {[
+              { label: "Active Agents", value: "1,248", icon: Users, color: "text-purple-400", change: "+12%" },
+              { label: "Neural Queries", value: "43.2K", icon: MessageSquare, color: "text-blue-400", change: "+18%" },
+              { label: "Data Cubes", value: "154", icon: Database, color: "text-emerald-400", change: "+5" },
+              { label: "System Uptime", value: "99.99%", icon: Activity, color: "text-orange-400", change: "STABLE" }
+            ].map((stat, i) => (
+              <ScrollReveal key={i} delay={i * 0.1} width="100%">
+                <motion.div
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  className="glass-morphism p-8 rounded-[2.5rem] border-white/5 group relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 transition-opacity">
+                    <stat.icon className="h-24 w-24" />
+                  </div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div className={`p-4 rounded-2xl bg-white/[0.03] border border-white/5`}>
+                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                    </div>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${stat.change.includes('+') ? 'text-emerald-400' : 'text-blue-400'}`}>{stat.change}</span>
+                  </div>
+                  <div className="text-4xl font-black mb-1 italic">{stat.value}</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500">{stat.label}</div>
+                </motion.div>
+              </ScrollReveal>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+            {/* Intelligence Hub Management (Institutional Data) */}
+            <div className="lg:col-span-2 space-y-8">
+              <ScrollReveal width="100%">
+                <div className="flex items-center justify-between mb-8 ml-2">
+                  <div className="flex items-center space-x-3">
+                    <Cpu className="h-5 w-5 text-purple-400" />
+                    <h2 className="text-2xl font-black uppercase tracking-tighter italic">Intelligence Hub</h2>
+                  </div>
+                  <div className="relative w-64 group">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 group-focus-within:text-purple-400 transition-colors" />
+                    <Input placeholder="SEARCH CLUSTERS..." className="bg-white/[0.03] border-white/10 h-10 pl-10 rounded-xl text-[10px] font-black uppercase tracking-widest" />
+                  </div>
+                </div>
+              </ScrollReveal>
+
+              <div className="space-y-6">
+                <AnimatePresence mode="popLayout">
+                  {data.map((item, index) => (
+                    <ScrollReveal key={item.id} delay={index * 0.1} width="100%">
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        whileHover={{ scale: 1.01 }}
+                        className="glass-morphism rounded-[2rem] border-white/5 p-8 flex flex-col md:flex-row items-center justify-between gap-8 group"
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-4 mb-3">
+                            <Badge className="bg-purple-600/10 text-purple-400 border-purple-500/20 font-black uppercase tracking-widest text-[8px] italic px-3">
+                              {item.category.toUpperCase()}
+                            </Badge>
+                            <span className="text-[8px] font-black uppercase tracking-widest text-gray-600 flex items-center">
+                              <Clock className="h-3 w-3 mr-2" />
+                              SYNC_DATE: {item.updatedAt}
+                            </span>
                           </div>
-                          <div>
-                            <div className="flex items-center space-x-3 mb-2">
-                              <h3 className="text-xl font-bold">{item.title}</h3>
-                              <Badge className="bg-white/5 text-[8px] font-black uppercase tracking-widest border-white/10 group-hover:bg-primary/20">{item.type}</Badge>
-                            </div>
-                            <p className="text-white/40 text-sm font-light leading-relaxed max-w-xl line-clamp-2">{item.content}</p>
-                          </div>
+                          <h3 className="text-2xl font-black uppercase tracking-tighter mb-2 group-hover:text-purple-400 transition-colors italic">{item.title}</h3>
+                          <p className="text-gray-500 text-sm font-medium leading-relaxed max-w-2xl">{item.content}</p>
                         </div>
-                        <div className="flex space-x-3 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(item)} className="h-12 w-12 rounded-xl border border-white/10 hover:bg-white/5"><Edit2 className="h-4 w-4" /></Button>
-                          <Button variant="ghost" size="icon" onClick={() => deleteInstitutionalData(item.id)} className="h-12 w-12 rounded-xl border border-white/10 hover:bg-red-500/10 hover:text-red-400 group/del"><Trash2 className="h-4 w-4 group-hover/del:scale-110 transition-transform" /></Button>
+                        <div className="flex items-center space-x-4">
+                          <Button
+                            onClick={() => handleEdit(item)}
+                            variant="ghost"
+                            className="h-12 w-12 rounded-xl bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white transition-all p-0"
+                          >
+                            <Edit2 className="h-5 w-5" />
+                          </Button>
+                          <Button
+                            onClick={() => handleDelete(item.id)}
+                            variant="ghost"
+                            className="h-12 w-12 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all p-0"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </Button>
+                        </div>
+                      </motion.div>
+                    </ScrollReveal>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+
+            {/* Neural Query Stream */}
+            <div className="space-y-8">
+              <ScrollReveal delay={0.3} width="100%">
+                <div className="flex items-center space-x-3 mb-8 ml-2">
+                  <Bot className="h-5 w-5 text-purple-400" />
+                  <h2 className="text-2xl font-black uppercase tracking-tighter italic">Neural Stream</h2>
+                </div>
+                <div className="glass-morphism rounded-[2.5rem] border-white/10 p-8 h-[600px] flex flex-col">
+                  <div className="flex-1 space-y-8 overflow-y-auto scrollbar-hide min-h-0">
+                    {[
+                      { user: "Agent_Viper", query: "Library availability status?", time: "2m ago", status: "Resolved" },
+                      { user: "Agent_Nebula", query: "Scholarship vector guidelines?", time: "5m ago", status: "Redirected" },
+                      { user: "Agent_Solar", query: "Hostel portal access issues.", time: "12m ago", status: "Pending" },
+                      { user: "Agent_Void", query: "Exam schedule synchronization.", time: "15m ago", status: "Resolved" },
+                      { user: "Agent_Nova", query: "Canteen matrix updates.", time: "22m ago", status: "Resolved" },
+                    ].map((query, i) => (
+                      <div key={i} className="relative pl-6 border-l-2 border-purple-500/20 group cursor-pointer hover:border-purple-500 transition-colors">
+                        <div className="absolute left-[-5px] top-0 h-2 w-2 rounded-full bg-purple-500" />
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-white italic">{query.user}</span>
+                          <span className="text-[8px] font-bold text-gray-500 uppercase">{query.time}</span>
+                        </div>
+                        <p className="text-xs text-gray-400 font-medium mb-3 group-hover:text-white transition-colors">"{query.query}"</p>
+                        <div className="flex items-center justify-between">
+                          <Badge className={`bg-transparent border-0 p-0 text-[8px] font-black uppercase tracking-[0.2em] ${query.status === 'Resolved' ? 'text-emerald-400' : query.status === 'Pending' ? 'text-orange-400' : 'text-blue-400'}`}>
+                            STATUS_{query.status.toUpperCase()}
+                          </Badge>
+                          <ArrowRight className="h-3 w-3 text-gray-700 group-hover:text-purple-400 transition-colors" />
                         </div>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            </ScrollReveal>
-          </div>
-
-          <div className="lg:col-span-4 space-y-8">
-            <ScrollReveal direction="right">
-              <Card className="bg-white/[0.03] border-white/10 rounded-[2.5rem] p-10">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-10 italic">Recent System Queries</h3>
-                <div className="space-y-6">
-                  {userQueries.slice(-5).map((query) => (
-                    <div key={query.id} className="p-4 rounded-xl border border-white/5 bg-white/[0.01]">
-                      <p className="text-sm font-light text-white/60 mb-2 truncate">{query.content}</p>
-                      <p className="text-[8px] font-black uppercase tracking-widest text-white/20">{new Date(query.timestamp).toLocaleString()}</p>
-                    </div>
-                  ))}
+                  <div className="mt-8 pt-8 border-t border-white/5 text-center">
+                    <Button variant="ghost" className="w-full text-gray-500 hover:text-white font-black uppercase tracking-widest text-[10px] h-10">
+                      View Operational Logs
+                    </Button>
+                  </div>
                 </div>
-              </Card>
-            </ScrollReveal>
+              </ScrollReveal>
 
-            <ScrollReveal direction="right" delay={0.2}>
-              <div className="p-10 rounded-[2.5rem] bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 flex flex-col items-center text-center">
-                <Activity className="h-12 w-12 text-primary mb-6" />
-                <h4 className="text-xl font-black italic uppercase tracking-tighter mb-4">System Integrity</h4>
-                <p className="text-white/40 text-xs font-light tracking-wide leading-loose">Matrix sync is running at peak biological efficiency. All knowledge vectors are currently prioritized for context-retrieval.</p>
-              </div>
-            </ScrollReveal>
+              <ScrollReveal delay={0.4} width="100%">
+                <div className="glass-morphism rounded-[2.5rem] p-8 border-white/5 bg-gradient-to-br from-purple-600/10 to-blue-600/10 relative overflow-hidden group">
+                  <div className="absolute -right-4 -bottom-4 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
+                    <Shield className="h-32 w-32" />
+                  </div>
+                  <h4 className="text-xl font-black uppercase tracking-tighter mb-4 italic">Security Matrix</h4>
+                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-relaxed mb-6">ALL DATA INJECTIONS ARE LOGGED AND AUDITED THROUGH NEURAL ENCRYPTION CHANNELS.</p>
+                  <div className="flex items-center space-x-3 text-emerald-400">
+                    <Shield className="h-4 w-4" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.3em]">Protection Level: MAX</span>
+                  </div>
+                </div>
+              </ScrollReveal>
+            </div>
           </div>
         </div>
       </div>
-      <Dialog open={!!selectedNotice} onOpenChange={(open) => !open && setSelectedNotice(null)}>
-        <DialogContent className="max-w-2xl bg-black/95 border-white/10 backdrop-blur-3xl text-white rounded-[2rem] p-0 overflow-hidden shadow-2xl">
-          {selectedNotice && (
-            <div className="flex flex-col max-h-[85vh]">
-              <div className="p-10 border-b border-white/10 bg-white/[0.02]">
-                <div className="flex items-start justify-between mb-8">
-                  <div className="p-5 bg-primary/10 rounded-2xl border border-primary/20 text-primary">
-                    {getTypeIcon(selectedNotice.type)}
-                  </div>
-                  <Badge className="bg-white/5 border-white/10 text-xs font-black uppercase tracking-widest px-4 py-2">{selectedNotice.type}</Badge>
-                </div>
-                <DialogHeader>
-                  <DialogTitle className="text-4xl font-black italic tracking-tighter text-white mb-3 leading-tight">{selectedNotice.title}</DialogTitle>
-                  <DialogDescription className="text-white/40 font-mono text-xs uppercase tracking-widest">
-                    ID: {selectedNotice.id.slice(0, 8)} • VECTOR NODE
-                  </DialogDescription>
-                </DialogHeader>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-10">
-                <div className="prose prose-invert max-w-none">
-                  <div className="text-lg leading-relaxed text-white/80 font-light whitespace-pre-wrap">
-                    {selectedNotice.content}
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-8 border-t border-white/10 bg-white/[0.02] flex gap-4">
-                <Button
-                  onClick={() => {
-                    handleEdit(selectedNotice);
-                    setSelectedNotice(null);
-                  }}
-                  className="flex-1 h-16 rounded-xl bg-white text-black font-black uppercase tracking-widest hover:bg-white/90 text-sm"
-                >
-                  <Edit2 className="h-5 w-5 mr-3" /> Modify Node
-                </Button>
-                <Button
-                  onClick={() => {
-                    deleteInstitutionalData(selectedNotice.id);
-                    setSelectedNotice(null);
-                  }}
-                  variant="outline"
-                  className="flex-1 h-16 rounded-xl border-red-500/20 text-red-400 hover:bg-red-500/10 hover:text-red-300 font-black uppercase tracking-widest text-sm"
-                >
-                  <Trash2 className="h-5 w-5 mr-3" /> Terminate Node
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

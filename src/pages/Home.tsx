@@ -22,59 +22,86 @@ export const Home = () => {
       <Navigation />
 
       {/* Immersive Hero Section */}
-      <section className="relative h-[100vh] flex items-center justify-center overflow-hidden border-b border-white/5">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden border-b border-white/5 py-20 px-6">
         <HeroCanvas />
         <div className="absolute inset-0 bg-gradient-hero pointer-events-none"></div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+        <div className="relative z-10 max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="text-left"
           >
             <div className="inline-flex items-center space-x-2 bg-primary/10 border border-primary/20 px-4 py-2 rounded-full mb-8 backdrop-blur-md">
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-              <span className="text-xs font-semibold tracking-widest uppercase text-primary">Intelligent Campus Evolution</span>
+              <span className="text-xs font-semibold tracking-widest uppercase text-primary">Your Intelligent Campus Companion</span>
+            </div>
+
+            <h1 className="text-6xl md:text-8xl lg:text-8xl font-black mb-8 tracking-tighter gradient-text-premium leading-[0.9] break-words">
+              Campus<span className="text-primary italic">_</span>Sathi
+            </h1>
+
+            <p className="text-lg md:text-xl text-foreground/60 max-w-xl mb-12 font-light leading-relaxed tracking-wide">
+              The only AI-powered platform designed to navigate your entire college journey. From <span className="text-primary font-medium">scholarship alerts</span> to <span className="text-primary font-medium">exam schedules</span>, we've got you covered.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-6">
+              <Link to="/login">
+                <Button size="lg" className="h-16 px-10 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all group overflow-hidden relative font-bold text-lg border-0 shadow-lg shadow-primary/20">
+                  <span className="relative z-10 flex items-center">
+                    Talk to Sathi
+                    <MessageSquare className="ml-3 h-5 w-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  </span>
+                </Button>
+              </Link>
+              <Link to="/about">
+                <Button size="lg" variant="outline" className="h-16 px-10 rounded-2xl border-white/10 hover:bg-white/5 backdrop-blur-sm transition-all text-lg font-medium">
+                  How it Works
+                </Button>
+              </Link>
             </div>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            className="text-6xl md:text-8xl lg:text-9xl font-bold mb-8 tracking-tighter gradient-text-premium leading-none"
-          >
-            Campus<span className="text-primary italic">_</span>Sathi
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="text-lg md:text-xl text-foreground/60 max-w-2xl mx-auto mb-12 font-light leading-relaxed tracking-wide"
-          >
-            Transcending conventional communication with hyper-intelligent document analysis and contextual awareness for the modern academic era.
-          </motion.p>
-
+          {/* New Chatbot Visual Area */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-6 justify-center"
+            initial={{ opacity: 0, scale: 0.8, rotate: 5 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            className="relative hidden lg:block"
           >
-            <Link to="/login">
-              <Button size="lg" className="h-16 px-10 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all group overflow-hidden relative font-bold text-lg">
-                <span className="relative z-10 flex items-center">
-                  Initialize Experience
-                  <ArrowRight className="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Button>
-            </Link>
-            <Link to="/about">
-              <Button size="lg" variant="outline" className="h-16 px-10 rounded-full border-foreground/10 hover:bg-foreground/5 backdrop-blur-sm transition-all text-lg font-medium">
-                Our Philosophy
-              </Button>
-            </Link>
+            <div className="relative z-20 group">
+              <div className="absolute -inset-4 bg-primary/20 rounded-full blur-3xl opacity-50 group-hover:opacity-70 transition-opacity animate-pulse" />
+              <img
+                src="/chatbot_hero.png"
+                alt="Campus Sathi Chatbot"
+                className="w-full h-auto max-w-lg mx-auto relative z-10 drop-shadow-[0_0_50px_rgba(var(--primary-rgb),0.3)] animate-float"
+              />
+
+              {/* Floating Status Cards */}
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-10 -right-10 z-30 bg-background/80 backdrop-blur-xl p-4 rounded-2xl border border-white/10 shadow-2xl flex items-center gap-3"
+              >
+                <div className="h-3 w-3 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-xs font-black uppercase tracking-widest text-foreground/80">Sathi Online</span>
+              </motion.div>
+
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-20 -left-10 z-30 bg-background/80 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-2xl space-y-2 max-w-[200px]"
+              >
+                <div className="flex items-center gap-2 text-primary font-bold text-sm">
+                  <Sparkles className="h-4 w-4" />
+                  <span>Proactive Alert</span>
+                </div>
+                <p className="text-[10px] text-foreground/60 font-medium leading-tight">
+                  New scholarship opportunity detected for Computer Science students!
+                </p>
+              </motion.div>
+            </div>
           </motion.div>
         </div>
 
@@ -82,65 +109,59 @@ export const Home = () => {
           style={{ y: y1 }}
           className="absolute bottom-20 left-10 md:left-20 text-[10vw] font-bold text-foreground/[0.01] select-none pointer-events-none whitespace-nowrap z-0"
         >
-          INTELLIGENCE • INNOVATION • IMPACT
+          ASSIST • GUIDE • EMPOWER
         </motion.div>
       </section>
 
       {/* Feature Narrative Section */}
-      <section className="py-32 relative overflow-hidden bg-foreground/[0.02]">
+      <section className="py-40 relative overflow-hidden bg-foreground/[0.01]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-24 items-center">
             <ScrollReveal direction="left">
-              <div className="relative group rounded-3xl overflow-hidden shadow-2xl border border-foreground/10 bg-background/50">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
+              <div className="relative group rounded-[3rem] overflow-hidden shadow-2xl border border-white/5 bg-background/50 p-4">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10"></div>
 
-                {/* Main Image */}
-                <img
-                  src={aiAnalysisImage}
-                  alt="AI Analysis Interface"
-                  className="w-full h-[500px] object-cover transform group-hover:scale-105 transition-transform duration-700"
-                />
-
-                {/* Floating Neural Engine Card */}
-                <div className="absolute top-8 right-8 z-20 bg-background/80 backdrop-blur-xl p-6 rounded-2xl border border-foreground/10 shadow-xl max-w-xs animate-float">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-blue-500/10 p-3 rounded-xl border border-blue-500/20">
-                      <Cpu className="h-8 w-8 text-blue-500" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-lg leading-tight mb-1">Neural Engine</h4>
-                      <p className="text-xs text-foreground/60 font-medium">Processing 10TB+ academic data</p>
-                    </div>
-                  </div>
+                <div className="relative z-20 overflow-hidden rounded-[2.5rem]">
+                  <img
+                    src="/chatbot_scholarship.png"
+                    alt="Chatbot resolving campus queries"
+                    className="w-full h-[600px] object-cover transform scale-110 group-hover:scale-100 transition-transform duration-1000"
+                  />
                 </div>
               </div>
             </ScrollReveal>
 
             <div className="space-y-12">
               <ScrollReveal direction="right">
-                <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                  A New Paradigm in <br />
-                  <span className="text-primary tracking-widest uppercase text-sm font-black bg-primary/10 px-4 py-1 rounded-full align-middle border border-primary/20">Campus Intelligence</span>
-                </h2>
+                <div className="space-y-4">
+                  <span className="text-primary font-black uppercase tracking-[0.3em] text-[10px] px-4 py-1 rounded-full bg-primary/10 border border-primary/20">The Sathi Advantage</span>
+                  <h2 className="text-5xl md:text-6xl font-bold leading-tight tracking-tighter">
+                    Never Miss a <br />
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 italic">Deadline Again.</span>
+                  </h2>
+                  <p className="text-foreground/50 text-xl font-light">
+                    Sathi isn't just a chatbot; it's a personalized campus intelligence layer that keeps you ahead of every academic curve.
+                  </p>
+                </div>
               </ScrollReveal>
 
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {[
-                  { icon: Brain, title: "Cognitive Document Analysis", content: "Deep learning models extract insights from complex academic papers and institutional records instantly." },
-                  { icon: Fingerprint, title: "Contextual Awareness", content: "Understands your specific role and history to provide tailored, personalized responses." },
-                  { icon: Globe, title: "Universal Translation", content: "Smashes language barriers with real-time translation across 50+ strategic languages." }
+                  { icon: FileText, title: "Scholarship & Grants", content: "Instant notifications and guided application help for all available campus funding." },
+                  { icon: Clock, title: "Exam & Class Schedules", content: "Real-time updates on exam timings, room changes, and personalized study reminders." },
+                  { icon: BookOpen, title: "Internal Circulars", content: "Decipher complex college announcements and circulars with conversational AI." }
                 ].map((feature, i) => (
                   <ScrollReveal key={i} delay={i * 0.1}>
                     <motion.div
-                      whileHover={{ x: 10, backgroundColor: "rgba(var(--primary-rgb), 0.05)" }}
-                      className="flex items-start space-x-6 p-6 rounded-2xl transition-all border border-transparent hover:border-foreground/5"
+                      whileHover={{ x: 10, scale: 1.02 }}
+                      className="flex items-start space-x-6 p-8 rounded-3xl transition-all border border-white/5 hover:border-white/10 hover:bg-white/[0.02] group"
                     >
-                      <div className="flex-shrink-0 bg-primary/10 p-4 rounded-2xl text-primary">
-                        <feature.icon className="h-6 w-6" />
+                      <div className="flex-shrink-0 bg-primary/10 p-5 rounded-2xl text-primary transition-colors group-hover:bg-primary/20">
+                        <feature.icon className="h-7 w-7" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-                        <p className="text-foreground/60 leading-relaxed text-sm font-medium">{feature.content}</p>
+                        <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{feature.title}</h3>
+                        <p className="text-foreground/50 leading-relaxed text-sm font-medium">{feature.content}</p>
                       </div>
                     </motion.div>
                   </ScrollReveal>

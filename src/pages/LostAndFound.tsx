@@ -2,564 +2,445 @@ import { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import { Footer } from '@/components/Footer';
 import { ScrollReveal } from '@/components/ScrollReveal';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, MapPin, Calendar, AlertCircle, CheckCircle2, Plus, Loader2, Send } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogDescription,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Search, MapPin, Calendar, Plus, Package, Clock, Phone, Mail, Sparkles, Brain, Zap, Shield, Activity } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
-const initialItems = [
+interface LostItem {
+    id: number;
+    title: string;
+    category: string;
+    location: string;
+    date: string;
+    status: 'lost' | 'found';
+    description: string;
+    image: string;
+}
+
+const initialItems: LostItem[] = [
     {
         id: 1,
-        title: "MacBook Pro Charger",
-        type: "Lost",
+        title: "Silver MacBook Pro 14\"",
         category: "Electronics",
-        location: "Library, 2nd Floor",
-        date: "2024-03-10",
-        status: "Open",
-        image: "https://images.unsplash.com/photo-1625295988185-13f56b772554?auto=format&fit=crop&q=80&w=800",
-        description: "Lost my white MacBook charger near the quiet study area. It has a sticker on the brick."
+        location: "Library Second Floor",
+        date: "March 10, 2024",
+        status: 'lost',
+        description: "MacBook Pro with a distinctive sticker of a rocket ship on the back. Was last seen near the study carrels.",
+        image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=800"
     },
     {
         id: 2,
-        title: "Blue Hydro Flask",
-        type: "Found",
-        category: "Accessories",
-        location: "Gym Area",
-        date: "2024-03-09",
-        status: "Open",
-        image: "https://images.unsplash.com/photo-1602143407151-cd111bb621a4?auto=format&fit=crop&q=80&w=800",
-        description: "Found a blue water bottle on the bench press rack. Left it at the front desk."
+        title: "Black Leather Wallet",
+        category: "Personal Items",
+        location: "Student Center Cafeteria",
+        date: "March 12, 2024",
+        status: 'found',
+        description: "Found a black leather wallet near the coffee station. Contains some cash but no ID found inside.",
+        image: "https://images.unsplash.com/photo-1627123430985-63dfd6a6bbad?auto=format&fit=crop&q=80&w=800"
     },
     {
         id: 3,
-        title: "Student ID Card",
-        type: "Lost",
-        category: "Documents",
-        location: "Cafeteria",
-        date: "2024-03-08",
-        status: "Resolved",
-        image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800",
-        description: "Dropped my ID card somewhere during lunch. Name: Sarah J."
+        title: "AirPods Pro Gen 2",
+        category: "Electronics",
+        location: "Main Gym",
+        date: "March 11, 2024",
+        status: 'lost',
+        description: "AirPods Pro in a clear protective case. Possibly dropped near the treadmills.",
+        image: "https://images.unsplash.com/photo-1588423770574-91021160df63?auto=format&fit=crop&q=80&w=800"
     },
     {
         id: 4,
-        title: "Black Umbrella",
-        type: "Found",
-        category: "Accessories",
-        location: "Building C Entrance",
-        date: "2024-03-11",
-        status: "Open",
-        image: "https://images.unsplash.com/photo-1518134018617-6412f6a6ae55?auto=format&fit=crop&q=80&w=800",
-        description: "Found a large black umbrella leaning against the wall near the main doors."
-    },
-    {
-        id: 5,
-        title: "Calculus Textbook",
-        type: "Lost",
-        category: "Books",
-        location: "Room 304",
-        date: "2024-03-07",
-        status: "Open",
-        image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
-        description: "Left my Calculus Vol. 2 book on the desk in the front row."
-    },
-    {
-        id: 6,
-        title: "AirPods Case",
-        type: "Found",
-        category: "Electronics",
-        location: "Student Center",
-        date: "2024-03-10",
-        status: "Open",
-        image: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?auto=format&fit=crop&q=80&w=800",
-        description: "Found a white AirPods case with a cute cat keychain."
+        title: "Blue Denim Jacket",
+        category: "Clothing",
+        location: "Lecture Hall A",
+        date: "March 09, 2024",
+        status: 'found',
+        description: "Levi's denim jacket found on the back of seat 42 in Lecture Hall A.",
+        image: "https://images.unsplash.com/photo-1576842267721-457e823b8c79?auto=format&fit=crop&q=80&w=800"
     }
 ];
 
 export const LostAndFound = () => {
-    const [items, setItems] = useState(initialItems);
-    const [activeTab, setActiveTab] = useState("All");
+    const [items, setItems] = useState<LostItem[]>(initialItems);
     const [searchQuery, setSearchQuery] = useState("");
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // Contact Dialog States
-    const [contactItem, setContactItem] = useState<any>(null);
+    const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<LostItem | null>(null);
     const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
-    const [isContactSubmitting, setIsContactSubmitting] = useState(false);
-    const [contactForm, setContactForm] = useState({
-        message: "",
-        contactInfo: ""
-    });
+    const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
+    const [isSubmittingContact, setIsSubmittingContact] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const [newItem, setNewItem] = useState({
-        title: "",
-        type: "Lost",
-        category: "Electronics",
-        location: "",
-        date: new Date().toISOString().split('T')[0],
-        description: "",
-        image: "" // Optional: In a real app, this would be a file upload
+        title: '',
+        category: 'Electronics',
+        location: '',
+        date: '',
+        status: 'lost' as 'lost' | 'found',
+        description: '',
+        image: 'https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?auto=format&fit=crop&q=80&w=800'
     });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setNewItem(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSelectChange = (name: string, value: string) => {
-        setNewItem(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleReportItem = (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-
-        // Simulate API call
-        setTimeout(() => {
-            const item = {
-                id: items.length + 1,
-                ...newItem,
-                status: "Open",
-                image: newItem.image || "https://images.unsplash.com/photo-1555664424-778a1e501b0d?auto=format&fit=crop&q=80&w=800" // Default image
-            };
-
-            setItems([item, ...items]);
-            setIsSubmitting(false);
-            setIsDialogOpen(false);
-            setNewItem({
-                title: "",
-                type: "Lost",
-                category: "Electronics",
-                location: "",
-                date: new Date().toISOString().split('T')[0],
-                description: "",
-                image: ""
-            });
-            toast.success("Item reported successfully!");
-        }, 1000);
-    };
-
-    const handleContactClick = (item: any) => {
-        setContactItem(item);
-        setContactForm({
-            message: item.type === 'Lost'
-                ? `Hi, I think I found your ${item.title}. It matches the description.`
-                : `Hi, I think this ${item.title} belongs to me. Can you confirm?`,
-            contactInfo: ""
+        const item: LostItem = {
+            id: items.length + 1,
+            ...newItem as any
+        };
+        setItems([item, ...items]);
+        setIsReportDialogOpen(false);
+        setNewItem({
+            title: '',
+            category: 'Electronics',
+            location: '',
+            date: '',
+            status: 'lost',
+            description: '',
+            image: 'https://images.unsplash.com/photo-1586769852836-bc069f19e1b6?auto=format&fit=crop&q=80&w=800'
         });
-        setIsContactDialogOpen(true);
     };
 
-    const handleContactSubmit = (e: React.FormEvent) => {
+    const handleContactSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsContactSubmitting(true);
-
-        // Simulate API call
+        setIsSubmittingContact(true);
+        await new Promise(r => setTimeout(r, 1500));
+        setIsSubmittingContact(false);
+        setShowSuccess(true);
         setTimeout(() => {
-            setIsContactSubmitting(false);
+            setShowSuccess(false);
             setIsContactDialogOpen(false);
-            toast.success(`Message sent to the ${contactItem.type === 'Lost' ? 'owner' : 'finder'}!`);
-            setContactForm({ message: "", contactInfo: "" });
-            setContactItem(null);
-        }, 1500);
+            setContactForm({ name: '', email: '', message: '' });
+        }, 2000);
     };
 
-    const filteredItems = items.filter(item => {
-        const matchesTab = activeTab === "All" ? true : item.type === activeTab;
-        const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.description.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesTab && matchesSearch;
-    });
+    const filteredItems = items.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
     return (
-        <div className="min-h-screen bg-background text-foreground selection:bg-primary/30">
+        <div className="min-h-screen bg-[#0a0a0f] text-white selection:bg-purple-500/30 overflow-hidden font-sans">
             <Navigation />
 
-            {/* Hero Section */}
-            <div className="relative pt-24 pb-20 md:pt-32 md:pb-24 overflow-hidden">
-                {/* Enhanced Background */}
-                <div className="absolute inset-0 bg-grid-pattern opacity-[0.04] pointer-events-none" />
-                <div className="absolute top-0 left-1/4 -ml-20 -mt-20 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
-                <div className="absolute bottom-0 right-1/4 -mr-20 -mb-20 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none" />
+            {/* Deep Space Background Effects */}
+            <div className="fixed inset-0 z-0 pointer-events-none">
+                <div className="absolute inset-0 z-0">
+                    <div className="stars absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-pulse" />
+                </div>
 
-                <div className="max-w-7xl mx-auto px-6 relative z-10">
-                    <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
+                {/* Nebula Glows */}
+                <div className="nebula-glow top-[-10%] left-[-10%] w-[40%] h-[40%] bg-purple-900/10 animate-orb" />
+                <div className="nebula-glow bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 animate-orb" style={{ animationDelay: '5s' }} />
+
+                <div className="absolute inset-0 neural-grid opacity-[0.05]" />
+            </div>
+
+            <div className="relative z-10 px-6">
+                {/* Space Hero Section */}
+                <div className="max-w-7xl mx-auto pt-40 pb-20 md:pt-48 md:pb-32">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
                         <ScrollReveal>
-                            <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-8 backdrop-blur-md hover:bg-primary/15 transition-colors cursor-default">
-                                <AlertCircle className="h-4 w-4 text-primary" />
-                                <span className="text-xs font-bold uppercase tracking-widest text-primary">Community Support System</span>
-                            </div>
+                            <div className="relative">
+                                <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/10 mb-8 backdrop-blur-md">
+                                    <Package className="h-4 w-4 text-purple-400 animate-pulse" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-purple-400 italic">Central Recovery Grid Active</span>
+                                </div>
+                                <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter mb-8 leading-[0.8] uppercase italic">
+                                    Lost & <br />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-400 to-purple-800">Found.</span>
+                                </h1>
+                                <p className="text-xl text-gray-400 max-w-xl font-medium leading-relaxed mb-12">
+                                    Track and recover items via the institutional neural network. Real-time synchronization of misplaced operational hardware.
+                                </p>
 
-                            <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-8 leading-[0.95] bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/60">
-                                Lost something? <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-pink-500">We've got you covered.</span>
-                            </h1>
-
-                            <p className="text-xl text-foreground/60 max-w-2xl mx-auto font-light leading-relaxed mb-10">
-                                Connect with the campus community to reunite with your lost belongings.
-                                Trusted by thousands of students daily.
-                            </p>
-
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-                                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                    <DialogTrigger asChild>
-                                        <Button size="lg" className="h-14 px-8 rounded-full text-base font-bold bg-primary text-white hover:bg-primary/90 shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all duration-300 transform hover:-translate-y-1">
-                                            <Plus className="h-5 w-5 mr-2" />
-                                            Report Item
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
-                                        <DialogHeader>
-                                            <DialogTitle>Report an Item</DialogTitle>
-                                            <DialogDescription>
-                                                Fill in the details about the item you lost or found.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="type">I...</Label>
-                                                <Select
-                                                    value={newItem.type}
-                                                    onValueChange={(val) => handleSelectChange("type", val)}
-                                                >
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select Type" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        <SelectItem value="Lost">Lost an item</SelectItem>
-                                                        <SelectItem value="Found">Found an item</SelectItem>
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>
-
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="title">Item Name</Label>
-                                                <Input
-                                                    id="title"
-                                                    name="title"
-                                                    placeholder="e.g. Blue Airpods Max"
-                                                    value={newItem.title}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="grid gap-2">
-                                                    <Label htmlFor="category">Category</Label>
-                                                    <Select
-                                                        value={newItem.category}
-                                                        onValueChange={(val) => handleSelectChange("category", val)}
-                                                    >
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Category" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="Electronics">Electronics</SelectItem>
-                                                            <SelectItem value="Accessories">Accessories</SelectItem>
-                                                            <SelectItem value="Documents">Documents</SelectItem>
-                                                            <SelectItem value="Books">Books</SelectItem>
-                                                            <SelectItem value="Clothing">Clothing</SelectItem>
-                                                            <SelectItem value="Other">Other</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                                <div className="grid gap-2">
-                                                    <Label htmlFor="date">Date</Label>
-                                                    <Input
-                                                        id="date"
-                                                        name="date"
-                                                        type="date"
-                                                        value={newItem.date}
-                                                        onChange={handleInputChange}
-                                                        required
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="location">Location</Label>
-                                                <Input
-                                                    id="location"
-                                                    name="location"
-                                                    placeholder="e.g. Library, 2nd floor"
-                                                    value={newItem.location}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div className="grid gap-2">
-                                                <Label htmlFor="description">Description</Label>
-                                                <Textarea
-                                                    id="description"
-                                                    name="description"
-                                                    placeholder="Provide more details to help identify the item..."
-                                                    value={newItem.description}
-                                                    onChange={handleInputChange}
-                                                    required
-                                                />
-                                            </div>
-
-                                            <div className="grid gap-2">
-                                                <Label>Image</Label>
-                                                <div className="flex items-center gap-4">
-                                                    <Button
-                                                        type="button"
-                                                        variant="outline"
-                                                        onClick={() => document.getElementById('image-upload')?.click()}
-                                                        className="w-full border-dashed"
-                                                    >
-                                                        {newItem.image ? "Change Image" : "Upload Image"}
-                                                    </Button>
-                                                    <input
-                                                        id="image-upload"
-                                                        type="file"
-                                                        accept="image/*"
-                                                        className="hidden"
-                                                        onChange={(e) => {
-                                                            const file = e.target.files?.[0];
-                                                            if (file) {
-                                                                const imageUrl = URL.createObjectURL(file);
-                                                                setNewItem(prev => ({ ...prev, image: imageUrl }));
-                                                            }
-                                                        }}
-                                                    />
-                                                </div>
-                                                {newItem.image && (
-                                                    <div className="relative mt-2 w-full h-40 rounded-lg overflow-hidden border border-border">
-                                                        <img
-                                                            src={newItem.image}
-                                                            alt="Preview"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                        <Button
-                                                            type="button"
-                                                            variant="destructive"
-                                                            size="sm"
-                                                            className="absolute top-2 right-2 h-6 w-6 p-0 rounded-full"
-                                                            onClick={() => setNewItem(prev => ({ ...prev, image: "" }))}
-                                                        >
-                                                            ×
-                                                        </Button>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <DialogFooter>
-                                                <Button type="submit" disabled={isSubmitting}>
-                                                    {isSubmitting ? (
-                                                        <>
-                                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                            Submitting...
-                                                        </>
-                                                    ) : (
-                                                        "Submit Report"
-                                                    )}
-                                                </Button>
-                                            </DialogFooter>
-                                        </form>
-                                    </DialogContent>
-                                </Dialog>
-
-                                <Button size="lg" variant="outline" className="h-14 px-8 rounded-full text-base font-bold border-foreground/10 hover:bg-foreground/5 backdrop-blur-sm">
-                                    Browse Recent
-                                </Button>
-                            </div>
-
-                            {/* Stats Section */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 w-full">
-                                {[
-                                    { label: "Active Cases", value: "142", sub: "+12 today" },
-                                    { label: "Items Recovered", value: "85%", sub: "Success rate" },
-                                    { label: "Community Users", value: "2.4k", sub: "Active now" },
-                                    { label: "Avg. Return Time", value: "24h", sub: "Fast turnaround" },
-                                ].map((stat, i) => (
-                                    <div key={i} className="p-4 rounded-2xl bg-foreground/[0.03] border border-foreground/5 backdrop-blur-sm hover:bg-foreground/[0.05] transition-colors">
-                                        <div className="text-3xl font-black text-foreground mb-1">{stat.value}</div>
-                                        <div className="text-sm font-semibold text-foreground/60">{stat.label}</div>
-                                        <div className="text-xs text-primary font-medium mt-1">{stat.sub}</div>
+                                <div className="flex flex-col sm:flex-row gap-6">
+                                    <div className="relative flex-1 group">
+                                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 group-focus-within:text-purple-400 transition-colors" />
+                                        <Input
+                                            placeholder="SCAN REPOSITORY..."
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            className="h-16 pl-16 rounded-2xl bg-white/[0.02] border-white/10 focus:border-purple-500/50 text-white font-medium transition-all"
+                                        />
                                     </div>
-                                ))}
+                                    <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button className="h-16 px-10 rounded-2xl bg-white text-black hover:bg-purple-600 hover:text-white font-black uppercase tracking-widest text-sm transition-all duration-500 shadow-2xl">
+                                                <Plus className="mr-3 h-5 w-5" />
+                                                Log Inventory
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="sm:max-w-[600px] bg-[#0a0a0f]/95 border-white/10 backdrop-blur-3xl text-white rounded-[2.5rem] p-10">
+                                            <DialogHeader className="mb-8">
+                                                <DialogTitle className="text-4xl font-black italic tracking-tighter uppercase mb-2">Initialize <span className="text-purple-400">Log.</span></DialogTitle>
+                                                <DialogDescription className="text-gray-500 font-bold tracking-widest text-[10px] uppercase">Submit data to the central recovery matrix</DialogDescription>
+                                            </DialogHeader>
+                                            <form onSubmit={handleReportItem} className="space-y-8">
+                                                <div className="grid grid-cols-2 gap-6">
+                                                    <div className="space-y-2">
+                                                        <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Hardware Entity</Label>
+                                                        <Input
+                                                            required
+                                                            placeholder="e.g. MacBook Pro"
+                                                            className="bg-white/[0.03] border-white/5 h-14 rounded-xl"
+                                                            value={newItem.title}
+                                                            onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Status Code</Label>
+                                                        <select
+                                                            className="w-full h-14 bg-white/[0.03] border border-white/5 rounded-xl px-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/50 appearance-none"
+                                                            value={newItem.status}
+                                                            onChange={(e) => setNewItem({ ...newItem, status: e.target.value as any })}
+                                                        >
+                                                            <option value="lost">LOST_VECTOR</option>
+                                                            <option value="found">FOUND_VECTOR</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Last Known Coordinates</Label>
+                                                    <Input
+                                                        required
+                                                        placeholder="e.g. Library 3rd Floor"
+                                                        className="bg-white/[0.03] border-white/5 h-14 rounded-xl"
+                                                        value={newItem.location}
+                                                        onChange={(e) => setNewItem({ ...newItem, location: e.target.value })}
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Item Description / Neural Metadata</Label>
+                                                    <Textarea
+                                                        required
+                                                        placeholder="Provide distinctive features for identity verification..."
+                                                        className="bg-white/[0.03] border-white/5 min-h-[120px] rounded-xl"
+                                                        value={newItem.description}
+                                                        onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
+                                                    />
+                                                </div>
+                                                <Button type="submit" className="w-full h-16 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black uppercase tracking-widest transition-all">
+                                                    Transmit Signal
+                                                </Button>
+                                            </form>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
                             </div>
                         </ScrollReveal>
+
+                        {/* System Metrics Grid */}
+                        <div className="grid grid-cols-2 gap-6">
+                            {[
+                                { label: "Lost Vectors", value: "24", icon: Package, color: "text-purple-400" },
+                                { label: "Recovered Nodes", value: "142", icon: Shield, color: "text-blue-400" },
+                                { label: "Sync Latency", value: "0.4ms", icon: Activity, color: "text-emerald-400" },
+                                { label: "Security Tier", value: "MAX", icon: Zap, color: "text-orange-400" }
+                            ].map((stat, i) => (
+                                <ScrollReveal key={i} delay={i * 0.1}>
+                                    <motion.div
+                                        whileHover={{ y: -5, scale: 1.02 }}
+                                        className="glass-morphism p-8 rounded-[2.5rem] border-white/5 group relative overflow-hidden"
+                                    >
+                                        <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-10 transition-opacity">
+                                            <stat.icon className="h-24 w-24" />
+                                        </div>
+                                        <stat.icon className={`h-8 w-8 ${stat.color} mb-4`} />
+                                        <div className="text-4xl font-black mb-1">{stat.value}</div>
+                                        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">{stat.label}</div>
+                                    </motion.div>
+                                </ScrollReveal>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Inventory Grid */}
+                <div className="max-w-7xl mx-auto pb-40">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+                        <AnimatePresence mode="popLayout">
+                            {filteredItems.map((item, index) => (
+                                <ScrollReveal key={item.id} delay={index * 0.1}>
+                                    <motion.div
+                                        layout
+                                        whileHover={{ y: -10 }}
+                                        className="h-full group"
+                                    >
+                                        <Card className="stellar-card h-full flex flex-col group">
+                                            <div className="relative h-64 overflow-hidden rounded-[2.5rem] m-2">
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-transparent to-transparent z-10 opacity-60" />
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-1000"
+                                                />
+                                                <div className="absolute top-5 left-5 z-20">
+                                                    <Badge className={`${item.status === 'lost' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'} backdrop-blur-xl px-4 py-1.5 font-black uppercase tracking-[0.2em] text-[8px] italic`}>
+                                                        {item.status.toUpperCase()}_VECTOR
+                                                    </Badge>
+                                                </div>
+                                                <div className="absolute bottom-5 right-5 z-20">
+                                                    <div className="p-3 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl">
+                                                        <Package className="h-5 w-5 text-purple-400" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <CardContent className="p-8 flex-1 flex flex-col justify-between">
+                                                <div className="space-y-6">
+                                                    <div>
+                                                        <div className="flex items-center gap-3 text-purple-400 font-black uppercase tracking-[0.2em] text-[9px] mb-3">
+                                                            <Calendar className="h-3 w-3" />
+                                                            {item.date}
+                                                        </div>
+                                                        <h3 className="text-2xl font-black text-white leading-none uppercase italic mb-4 group-hover:text-purple-400 transition-colors">
+                                                            {item.title}
+                                                        </h3>
+                                                    </div>
+
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-center text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                                                            <MapPin className="h-4 w-4 mr-3 text-purple-500" />
+                                                            {item.location}
+                                                        </div>
+                                                        <div className="flex items-center text-gray-400 text-[10px] font-black uppercase tracking-widest">
+                                                            <Brain className="h-4 w-4 mr-3 text-purple-500" />
+                                                            {item.category}
+                                                        </div>
+                                                    </div>
+
+                                                    <p className="text-gray-500 text-sm font-medium leading-relaxed line-clamp-2">
+                                                        {item.description}
+                                                    </p>
+                                                </div>
+
+                                                <div className="mt-10 pt-6 border-t border-white/5">
+                                                    <Dialog open={isContactDialogOpen && selectedItem?.id === item.id} onOpenChange={(open) => {
+                                                        if (!open) {
+                                                            setIsContactDialogOpen(false);
+                                                            setSelectedItem(null);
+                                                        }
+                                                    }}>
+                                                        <DialogTrigger asChild>
+                                                            <Button
+                                                                onClick={() => {
+                                                                    setSelectedItem(item);
+                                                                    setIsContactDialogOpen(true);
+                                                                }}
+                                                                className="w-full h-14 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white text-white hover:text-black font-black uppercase tracking-widest text-[10px] transition-all duration-500"
+                                                            >
+                                                                {item.status === 'lost' ? 'REPORT_FOUND' : 'CONTACT_OWNER'}
+                                                            </Button>
+                                                        </DialogTrigger>
+                                                        <DialogContent className="sm:max-w-[500px] bg-[#0a0a0f]/95 border-white/10 backdrop-blur-3xl text-white rounded-[2.5rem] p-10">
+                                                            <AnimatePresence mode="wait">
+                                                                {!showSuccess ? (
+                                                                    <motion.div
+                                                                        key="form"
+                                                                        initial={{ opacity: 0, y: 10 }}
+                                                                        animate={{ opacity: 1, y: 0 }}
+                                                                        exit={{ opacity: 0, scale: 0.9 }}
+                                                                    >
+                                                                        <DialogHeader className="mb-8">
+                                                                            <DialogTitle className="text-4xl font-black italic tracking-tighter uppercase mb-2">Initialize <span className="text-purple-400">Comms.</span></DialogTitle>
+                                                                            <DialogDescription className="text-gray-500 font-bold tracking-widest text-[10px] uppercase">Routing message through secure neural channel</DialogDescription>
+                                                                        </DialogHeader>
+
+                                                                        <form onSubmit={handleContactSubmit} className="space-y-6">
+                                                                            <div className="space-y-4">
+                                                                                <div className="space-y-2">
+                                                                                    <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Identify Payload</Label>
+                                                                                    <div className="relative group">
+                                                                                        <Package className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-purple-400 opacity-50" />
+                                                                                        <Input disabled value={selectedItem?.title} className="bg-white/[0.03] border-white/5 h-14 pl-12 rounded-xl text-purple-400 font-black italic" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="space-y-2">
+                                                                                    <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Your Name / Agent ID</Label>
+                                                                                    <div className="relative">
+                                                                                        <Brain className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
+                                                                                        <Input
+                                                                                            required
+                                                                                            placeholder="OPERATOR_NAME"
+                                                                                            className="bg-white/[0.03] border-white/5 h-14 pl-12 rounded-xl"
+                                                                                            value={contactForm.name}
+                                                                                            onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                                                                                        />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="space-y-2">
+                                                                                    <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Neural Vector (Email)</Label>
+                                                                                    <div className="relative">
+                                                                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
+                                                                                        <Input
+                                                                                            required
+                                                                                            type="email"
+                                                                                            placeholder="COMM_CHANNEL@INSTITUTION.EDU"
+                                                                                            className="bg-white/[0.03] border-white/5 h-14 pl-12 rounded-xl"
+                                                                                            value={contactForm.email}
+                                                                                            onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                                                                                        />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="space-y-2">
+                                                                                    <Label className="uppercase text-[10px] font-black tracking-widest text-gray-500 ml-2">Transmission Data</Label>
+                                                                                    <Textarea
+                                                                                        required
+                                                                                        placeholder="Specify recovery coordinates or verification data..."
+                                                                                        className="bg-white/[0.03] border-white/5 min-h-[100px] rounded-xl"
+                                                                                        value={contactForm.message}
+                                                                                        onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                            <Button disabled={isSubmittingContact} type="submit" className="w-full h-16 rounded-xl bg-white text-black hover:bg-purple-600 hover:text-white font-black uppercase tracking-widest transition-all">
+                                                                                {isSubmittingContact ? "TRANSMITTING..." : "INITIALIZE BURST"}
+                                                                            </Button>
+                                                                        </form>
+                                                                    </motion.div>
+                                                                ) : (
+                                                                    <motion.div
+                                                                        key="success"
+                                                                        initial={{ opacity: 0, scale: 0.9 }}
+                                                                        animate={{ opacity: 1, scale: 1 }}
+                                                                        className="py-12 text-center"
+                                                                    >
+                                                                        <div className="relative inline-block mb-8">
+                                                                            <div className="absolute -inset-8 bg-emerald-500/20 rounded-full blur-2xl animate-pulse" />
+                                                                            <div className="relative p-8 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                                                                                <Zap className="h-12 w-12 text-emerald-400 animate-bounce" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <h3 className="text-3xl font-black italic tracking-tighter uppercase mb-2">Burst <span className="text-emerald-400">Complete.</span></h3>
+                                                                        <p className="text-gray-500 font-bold tracking-widest text-[10px] uppercase">Neural packet successfully routed</p>
+                                                                    </motion.div>
+                                                                )}
+                                                            </AnimatePresence>
+                                                        </DialogContent>
+                                                    </Dialog>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </motion.div>
+                                </ScrollReveal>
+                            ))}
+                        </AnimatePresence>
                     </div>
                 </div>
             </div>
-
-            {/* Main Content */}
-            <section className="py-12 pb-32 px-6 bg-gradient-to-b from-background to-foreground/[0.02]">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
-                        <Tabs defaultValue="All" className="w-full md:w-auto" onValueChange={setActiveTab}>
-                            <TabsList className="bg-foreground/5 border border-foreground/10 rounded-full h-14 p-1 inline-flex w-full md:w-auto">
-                                {["All", "Lost", "Found"].map((tab) => (
-                                    <TabsTrigger
-                                        key={tab}
-                                        value={tab}
-                                        className="rounded-full px-8 h-12 font-bold text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-white transition-all flex-1 md:flex-none"
-                                    >
-                                        {tab}
-                                    </TabsTrigger>
-                                ))}
-                            </TabsList>
-                        </Tabs>
-
-                        <div className="relative w-full md:w-96 group">
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground/40 group-focus-within:text-primary transition-colors" />
-                            <Input
-                                placeholder="Search items..."
-                                className="h-14 pl-12 rounded-full bg-white border-foreground/10 focus-visible:ring-primary/50 text-base shadow-sm"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {filteredItems.map((item, index) => (
-                            <ScrollReveal key={item.id} delay={index * 0.05} width="100%">
-                                <motion.div whileHover={{ y: -5 }} transition={{ duration: 0.2 }}>
-                                    <Card className="bg-white border-foreground/5 dark:bg-foreground/[0.02] dark:border-foreground/10 overflow-hidden rounded-[2rem] hover:shadow-2xl transition-all duration-300 group h-full flex flex-col hover:border-primary/20">
-                                        <div className="relative h-64 overflow-hidden">
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                                            <img
-                                                src={item.image}
-                                                alt={item.title}
-                                                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                            <div className="absolute top-4 left-4 z-20">
-                                                <Badge variant={item.type === 'Lost' ? 'destructive' : 'default'} className="px-3 py-1 font-bold uppercase tracking-wider text-[10px] shadow-lg">
-                                                    {item.type}
-                                                </Badge>
-                                            </div>
-                                            <div className="absolute top-4 right-4 z-20">
-                                                {item.status === 'Resolved' && (
-                                                    <Badge variant="secondary" className="bg-green-500/90 text-white border-0 px-3 py-1 font-bold uppercase tracking-wider text-[10px] shadow-lg flex items-center gap-1">
-                                                        <CheckCircle2 className="h-3 w-3" /> Resolved
-                                                    </Badge>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <CardContent className="p-6 flex-1 space-y-4">
-                                            <div>
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <Badge variant="outline" className="text-[10px] border-foreground/20 text-foreground/60">{item.category}</Badge>
-                                                    <span className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">• {item.date}</span>
-                                                </div>
-                                                <h3 className="text-xl font-bold text-foreground leading-tight group-hover:text-primary transition-colors">{item.title}</h3>
-                                            </div>
-
-                                            <div className="space-y-2">
-                                                <div className="flex items-start text-foreground/60 text-sm font-medium">
-                                                    <MapPin className="h-4 w-4 mr-2 text-primary mt-0.5 flex-shrink-0" />
-                                                    {item.location}
-                                                </div>
-                                                <p className="text-foreground/50 text-sm leading-relaxed line-clamp-2">
-                                                    {item.description}
-                                                </p>
-                                            </div>
-                                        </CardContent>
-
-                                        <CardFooter className="p-6 pt-0">
-                                            <Button
-                                                variant="outline"
-                                                className="w-full h-12 rounded-xl border-foreground/10 hover:bg-primary hover:text-white hover:border-primary font-bold tracking-wide transition-all"
-                                                onClick={() => handleContactClick(item)}
-                                            >
-                                                Contact {item.type === 'Lost' ? 'Owner' : 'Finder'}
-                                            </Button>
-                                        </CardFooter>
-                                    </Card>
-                                </motion.div>
-                            </ScrollReveal>
-                        ))}
-                    </div>
-
-                    {filteredItems.length === 0 && (
-                        <div className="text-center py-20 opacity-50">
-                            <div className="w-20 h-20 bg-foreground/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <Search className="h-10 w-10 text-foreground/40" />
-                            </div>
-                            <h3 className="text-xl font-bold text-foreground mb-2">No items found</h3>
-                            <p className="text-foreground/60">Try adjusting your search terms or filters.</p>
-                        </div>
-                    )}
-                </div>
-            </section>
-
-            {/* Contact Dialog */}
-            <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
-                <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                        <DialogTitle>Contact {contactItem?.type === 'Lost' ? 'Owner' : 'Finder'}</DialogTitle>
-                        <DialogDescription>
-                            Send a message regarding the <strong>{contactItem?.title}</strong>
-                        </DialogDescription>
-                    </DialogHeader>
-                    {contactItem && (
-                        <form onSubmit={handleContactSubmit} className="grid gap-4 py-4">
-                            <div className="flex items-center gap-4 bg-muted/50 p-3 rounded-lg border border-border/50">
-                                <div className="h-12 w-12 rounded-md overflow-hidden bg-background">
-                                    <img src={contactItem.image} alt={contactItem.title} className="h-full w-full object-cover" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-sm">{contactItem.title}</p>
-                                    <p className="text-xs text-muted-foreground">{contactItem.location} • {contactItem.date}</p>
-                                </div>
-                            </div>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="contact-message">Message</Label>
-                                <Textarea
-                                    id="contact-message"
-                                    value={contactForm.message}
-                                    onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
-                                    rows={4}
-                                    required
-                                    className="resize-none"
-                                />
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="contact-info">Your Contact Info (Email/Phone)</Label>
-                                <Input
-                                    id="contact-info"
-                                    placeholder="e.g. 9876543210 or email@college.edu"
-                                    value={contactForm.contactInfo}
-                                    onChange={(e) => setContactForm(prev => ({ ...prev, contactInfo: e.target.value }))}
-                                    required
-                                />
-                            </div>
-
-                            <DialogFooter>
-                                <Button type="submit" disabled={isContactSubmitting} className="w-full">
-                                    {isContactSubmitting ? (
-                                        <>
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            Sending...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Send className="mr-2 h-4 w-4" />
-                                            Send Message
-                                        </>
-                                    )}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    )}
-                </DialogContent>
-            </Dialog>
 
             <Footer />
         </div>

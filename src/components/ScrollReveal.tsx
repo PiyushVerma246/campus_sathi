@@ -41,6 +41,7 @@ export const ScrollReveal = ({
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
                 transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+                className="h-full"
             >
                 {children}
             </motion.div>

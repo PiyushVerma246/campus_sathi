@@ -99,10 +99,11 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 85% 55%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --primary-hover: 210 85% 50%;
-    --primary-light: 210 85% 15%;
+    --primary: 263.4 70% 50.4%;
+    /* Deep Stellar Purple */
+    --primary-foreground: 210 40% 98%;
+    --primary-hover: 263.4 70% 45.4%;
+    --primary-light: 263.4 70% 15%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -111,9 +112,9 @@
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 195 75% 60%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --accent-hover: 195 75% 55%;
+    --accent: 263.4 70% 50.4%;
+    --accent-foreground: 210 40% 98%;
+    --accent-hover: 263.4 70% 45.4%;
 
     --success: 142 70% 50%;
     --success-foreground: 222.2 84% 4.9%;
@@ -122,18 +123,18 @@
     --destructive: 0 75% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --chat-user: 210 85% 55%;
-    --chat-user-foreground: 222.2 84% 4.9%;
+    --chat-user: 263.4 70% 50.4%;
+    --chat-user-foreground: 210 40% 98%;
     --chat-bot: 217.2 32.6% 17.5%;
     --chat-bot-foreground: 210 40% 98%;
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --ring: 263.4 70% 50.4%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary: 263.4 70% 50.4%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
@@ -353,17 +354,68 @@
   }
 
   /* Custom focus styles */
-  .focus-visible:focus-visible {
+  :focus-visible {
     outline: 2px solid hsl(var(--primary));
     outline-offset: 2px;
   }
 
-  /* Dark mode specific styles */
-  .dark {
-    color-scheme: dark;
+  /* Glassmorphism Classes */
+  .glass-morphism {
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-2xl;
   }
 
-  .light {
-    color-scheme: light;
+  .glass-morphism-strong {
+    @apply bg-white/[0.07] backdrop-blur-3xl border border-white/20 shadow-2xl;
+  }
+
+  .stellar-card {
+    @apply relative overflow-hidden rounded-[2.5rem] bg-[#12121e]/40 border border-white/5 backdrop-blur-3xl transition-all duration-500 hover:bg-[#12121e]/60 hover:border-purple-500/30;
+  }
+
+  .stellar-border {
+    @apply border border-white/10;
+  }
+
+  /* Stellar Gradients */
+  .gradient-stellar {
+    background: linear-gradient(135deg, #ffffff 0%, #a855f7 50%, #6366f1 100%);
+  }
+
+  .gradient-stellar-text {
+    @apply text-transparent bg-clip-text;
+    background-image: linear-gradient(to right, #ffffff, #a855f7, #6366f1);
+  }
+
+  /* Deep Space Decorations */
+  .neural-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .nebula-glow {
+    @apply absolute rounded-full blur-[120px] pointer-events-none opacity-50;
+  }
+
+  /* Animations Enhancement */
+  @keyframes orb-float {
+
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+
+    33% {
+      transform: translate(30px, -50px);
+    }
+
+    66% {
+      transform: translate(-20px, 20px);
+    }
+  }
+
+  .animate-orb {
+    animation: orb-float 20s ease-in-out infinite;
   }
 }
