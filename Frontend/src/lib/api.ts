@@ -3,7 +3,12 @@
  * Connects frontend to FastAPI backend endpoints
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
+if (!API_BASE_URL) {
+    throw new Error("VITE_API_URL is not defined. Backend URL is required.");
+}
+
 
 export interface QueryRequest {
     query: string;
@@ -53,6 +58,9 @@ export interface StatsResponse {
 /**
  * Query the RAG system
  */
+/**
+ * Query the RAG system
+ */
 export async function queryDocuments(request: QueryRequest): Promise<QueryResponse> {
     const response = await fetch(`${API_BASE_URL}/api/query`, {
         method: 'POST',
@@ -62,12 +70,7 @@ export async function queryDocuments(request: QueryRequest): Promise<QueryRespon
         body: JSON.stringify(request),
     });
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(error.detail || `Query failed: ${response.statusText}`);
-    }
-
-    return response.json();
+    return handleResponse<QueryResponse>(response);
 }
 
 /**
@@ -81,9 +84,6 @@ export interface UploadResponse {
     message: string;
 }
 
-/**
- * Upload a PDF document
- */
 /**
  * Helper to safely parse JSON response
  */
@@ -133,13 +133,7 @@ export async function getDocumentStatus(documentId: string): Promise<{ status: s
  */
 export async function listDocuments(): Promise<{ documents: DocumentInfo[]; total: number }> {
     const response = await fetch(`${API_BASE_URL}/api/documents`);
-
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(error.detail || `Failed to list documents: ${response.statusText}`);
-    }
-
-    return response.json();
+    return handleResponse<{ documents: DocumentInfo[]; total: number }>(response);
 }
 
 /**
@@ -149,13 +143,7 @@ export async function deleteDocument(documentId: string): Promise<{ message: str
     const response = await fetch(`${API_BASE_URL}/api/documents/${documentId}`, {
         method: 'DELETE',
     });
-
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(error.detail || `Failed to delete document: ${response.statusText}`);
-    }
-
-    return response.json();
+    return handleResponse<{ message: string; document_id: string }>(response);
 }
 
 /**
@@ -163,13 +151,7 @@ export async function deleteDocument(documentId: string): Promise<{ message: str
  */
 export async function healthCheck(): Promise<HealthResponse> {
     const response = await fetch(`${API_BASE_URL}/api/health`);
-
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(error.detail || `Health check failed: ${response.statusText}`);
-    }
-
-    return response.json();
+    return handleResponse<HealthResponse>(response);
 }
 
 /**
@@ -177,11 +159,5 @@ export async function healthCheck(): Promise<HealthResponse> {
  */
 export async function getStats(): Promise<StatsResponse> {
     const response = await fetch(`${API_BASE_URL}/api/stats`);
-
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(error.detail || `Failed to get stats: ${response.statusText}`);
-    }
-
-    return response.json();
+    return handleResponse<StatsResponse>(response);
 }
