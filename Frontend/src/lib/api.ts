@@ -58,9 +58,6 @@ export interface StatsResponse {
 /**
  * Query the RAG system
  */
-/**
- * Query the RAG system
- */
 export async function queryDocuments(request: QueryRequest): Promise<QueryResponse> {
     const response = await fetch(`${API_BASE_URL}/api/query`, {
         method: 'POST',

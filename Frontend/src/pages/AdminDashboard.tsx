@@ -1,3 +1,4 @@
+import { listDocuments, uploadDocument, deleteDocument, getDocumentStatus } from '@/lib/api';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
@@ -9,7 +10,7 @@ import { Navigation } from '@/components/Navigation';
 import { ScrollReveal } from '@/components/ScrollReveal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { listDocuments, uploadDocument, deleteDocument } from '@/lib/api';
+
 
 interface Document {
   document_id: string;
@@ -57,6 +58,10 @@ export const AdminDashboard = () => {
       // 1. Initial Upload
       const response = await uploadDocument(file);
 
+      if (!response || !response.document_id) {
+        throw new Error("Invalid upload response from backend");
+      }
+
       if (response.status === 'already_indexed') {
         toast.warning("Document Exists", {
           description: `${file.name} was already indexed.`,
@@ -75,7 +80,7 @@ export const AdminDashboard = () => {
         const pollInterval = setInterval(async () => {
           attempts++;
           try {
-            const { getDocumentStatus } = await import('@/lib/api');
+            // Using static import instead of dynamic import for production stability
             const statusRes = await getDocumentStatus(docId);
 
             if (statusRes.status === 'completed') {

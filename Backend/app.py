@@ -30,14 +30,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "http://localhost:8080",
-        "http://localhost:3000",
-        "https://campus-sathi.onrender.com", # Update this with your specific Render URL if different
-        # Wildcards for subdomains provided by Render/Cloudflare if needed, but specific is safer with credentials
-        "https://*.onrender.com", 
-        "https://*.trycloudflare.com"
+        "https://campus-sathi.onrender.com"
     ],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -144,9 +139,10 @@ def get_pdf_path_from_hash(pdf_hash: str) -> Optional[str]:
     mapping = get_hash_mapping()
     filename = mapping.get(pdf_hash)
     if filename:
-        path = DATA_DIR / filename
-        if path.exists():
-            return str(path)
+        safe_filename = f"{pdf_hash}.pdf"
+        file_path = DATA_DIR / safe_filename
+        if file_path.exists():
+            return str(file_path)
     return None
 
 
@@ -264,7 +260,8 @@ async def upload_document(
         file_path = DATA_DIR / file.filename
         
         with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            contents = await file.read()
+            buffer.write(contents)
         
         # Get file hash
         pdf_hash = get_file_hash(str(file_path))
@@ -310,25 +307,7 @@ async def upload_document(
              file_path.unlink()
         raise HTTPException(status_code=500, detail=f"Failed to initiate upload: {str(e)}")
 
-@app.get("/api/documents/status/{document_id}", tags=["Documents"])
-async def get_document_status(document_id: str):
-    """
-    Check the processing status of a document.
-    """
-    status = UPLOAD_STATUS.get(document_id)
-    
-    # If not in memory, check if it exists in VDB (persistence check)
-    if not status:
-        try:
-            vdb = get_vdb()
-            if vdb.check_processed(document_id):
-                status = "completed"
-            else:
-                status = "not_found"
-        except:
-            status = "unknown"
-            
-    return {"status": status, "document_id": document_id}
+# Duplicate route removed here
 
 @app.get("/api/documents", response_model=DocumentListResponse, tags=["Documents"])
 async def list_documents():
