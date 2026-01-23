@@ -28,14 +28,7 @@ app = FastAPI(
 # CORS Configuration - Allow frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:8080",
-        "http://localhost:3000",
-        "https://*.onrender.com",  # Allow all Render subdomains
-        # Add your custom domain here if you have one:
-        # "https://your-custom-domain.com",
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -178,11 +171,52 @@ async def get_stats():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get stats: {str(e)}")
 
+# ============================================
+# Global Status Store (In-Memory)
+# ============================================
+UPLOAD_STATUS: Dict[str, str] = {}  # document_id -> "processing" | "completed" | "failed" | "error_msg"
+
+def process_pdf_background(file_path: Path, pdf_hash: str, original_filename: str):
+    """
+    Background task to process PDF: OCR -> Embeddings -> FAISS
+    """
+    try:
+        print(f"[BACKGROUND] Starting processing for {original_filename} ({pdf_hash})")
+        UPLOAD_STATUS[pdf_hash] = "processing"
+        
+        # heavy lifting
+        run_rag_pipeline(str(file_path), query="", top_k=1)
+        
+        # Update hash mapping
+        mapping = get_hash_mapping()
+        mapping[pdf_hash] = original_filename
+        save_hash_mapping(mapping)
+        
+        UPLOAD_STATUS[pdf_hash] = "completed"
+        print(f"[BACKGROUND] Completed processing for {original_filename}")
+        
+    except Exception as e:
+        print(f"[BACKGROUND] Failed processing for {original_filename}: {e}")
+        UPLOAD_STATUS[pdf_hash] = "failed"
+        # Optional: Store error message if needed, e.g., UPLOAD_STATUS[f"{pdf_hash}_error"] = str(e)
+        
+        # Clean up file if indexing failed
+        if file_path.exists():
+            file_path.unlink()
+
+from fastapi import BackgroundTasks
+
 @app.post("/api/documents/upload", response_model=UploadResponse, tags=["Documents"])
-async def upload_document(file: UploadFile = File(...)):
+async def upload_document(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...)
+):
     """
-    Upload and index a PDF document.
+    Upload a PDF document and start background processing.
+    Returns immediately with status "processing".
     """
+    print(f"[UPLOAD] Received file: {file.filename}")
+    
     # Validate file type
     if not file.filename.lower().endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
@@ -196,10 +230,12 @@ async def upload_document(file: UploadFile = File(...)):
         
         # Get file hash
         pdf_hash = get_file_hash(str(file_path))
+        print(f"[UPLOAD] File hash: {pdf_hash}")
         
         # Check if already indexed
         vdb = get_vdb()
         if vdb.check_processed(pdf_hash):
+            print(f"[UPLOAD] Document already indexed: {pdf_hash}")
             return UploadResponse(
                 document_id=pdf_hash,
                 filename=file.filename,
@@ -207,32 +243,54 @@ async def upload_document(file: UploadFile = File(...)):
                 chunks_created=0,
                 message="Document was already indexed"
             )
+            
+        # Check if currently processing
+        if UPLOAD_STATUS.get(pdf_hash) == "processing":
+             return UploadResponse(
+                document_id=pdf_hash,
+                filename=file.filename,
+                status="processing",
+                chunks_created=0,
+                message="Document is currently being processed"
+            )
         
-        # Index the document
-        run_rag_pipeline(str(file_path), query="", top_k=1)
-        
-        # Update hash mapping
-        mapping = get_hash_mapping()
-        mapping[pdf_hash] = file.filename
-        save_hash_mapping(mapping)
-        
-        # Get chunk count
-        sources = vdb.get_all_sources()
-        chunks = next((s["chunk_count"] for s in sources if s["source_hash"] == pdf_hash), 0)
+        # Start background task
+        background_tasks.add_task(process_pdf_background, file_path, pdf_hash, file.filename)
+        UPLOAD_STATUS[pdf_hash] = "processing"
         
         return UploadResponse(
             document_id=pdf_hash,
             filename=file.filename,
-            status="indexed",
-            chunks_created=chunks,
-            message="Document successfully indexed"
+            status="processing",
+            chunks_created=0,
+            message="Document uploaded successfully. Processing started."
         )
         
     except Exception as e:
-        # Clean up file if indexing failed
-        if file_path.exists():
-            file_path.unlink()
-        raise HTTPException(status_code=500, detail=f"Failed to index document: {str(e)}")
+        # Clean up file if upload setup failed (before background task)
+        if 'file_path' in locals() and file_path.exists() and UPLOAD_STATUS.get(pdf_hash) != "processing":
+             file_path.unlink()
+        raise HTTPException(status_code=500, detail=f"Failed to initiate upload: {str(e)}")
+
+@app.get("/api/documents/status/{document_id}", tags=["Documents"])
+async def get_document_status(document_id: str):
+    """
+    Check the processing status of a document.
+    """
+    status = UPLOAD_STATUS.get(document_id)
+    
+    # If not in memory, check if it exists in VDB (persistence check)
+    if not status:
+        try:
+            vdb = get_vdb()
+            if vdb.check_processed(document_id):
+                status = "completed"
+            else:
+                status = "not_found"
+        except:
+            status = "unknown"
+            
+    return {"status": status, "document_id": document_id}
 
 @app.get("/api/documents", response_model=DocumentListResponse, tags=["Documents"])
 async def list_documents():
