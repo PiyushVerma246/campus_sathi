@@ -72,6 +72,8 @@ async def get_document_status(document_id: str, response: Response):
             status = "unknown"
             
     return {"status": status, "document_id": document_id}
+# Data directory
+DATA_DIR = Path("data")
 DATA_DIR.mkdir(exist_ok=True)
 
 # ============================================
