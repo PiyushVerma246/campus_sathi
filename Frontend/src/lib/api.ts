@@ -84,6 +84,29 @@ export interface UploadResponse {
 /**
  * Upload a PDF document
  */
+/**
+ * Helper to safely parse JSON response
+ */
+async function handleResponse<T>(response: Response): Promise<T> {
+    const text = await response.text();
+    try {
+        const data = JSON.parse(text);
+        if (!response.ok) {
+            throw new Error(data.detail || `API Error: ${response.statusText}`);
+        }
+        return data;
+    } catch (e) {
+        // If JSON parse fails, it might be an HTML error page from Cloudflare/proxy
+        if (!response.ok) {
+            throw new Error(`API Error (${response.status}): ${text.slice(0, 100)}...`);
+        }
+        throw new Error("Invalid JSON response from server");
+    }
+}
+
+/**
+ * Upload a PDF document
+ */
 export async function uploadDocument(file: File): Promise<UploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
@@ -91,14 +114,10 @@ export async function uploadDocument(file: File): Promise<UploadResponse> {
     const response = await fetch(`${API_BASE_URL}/api/documents/upload`, {
         method: 'POST',
         body: formData,
+        // Do NOT set Content-Type header; browser sets it with boundary for FormData
     });
 
-    if (!response.ok) {
-        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
-        throw new Error(error.detail || `Upload failed: ${response.statusText}`);
-    }
-
-    return response.json();
+    return handleResponse<UploadResponse>(response);
 }
 
 /**
@@ -106,12 +125,7 @@ export async function uploadDocument(file: File): Promise<UploadResponse> {
  */
 export async function getDocumentStatus(documentId: string): Promise<{ status: string; document_id: string }> {
     const response = await fetch(`${API_BASE_URL}/api/documents/status/${documentId}`);
-
-    if (!response.ok) {
-        throw new Error(`Failed to check status: ${response.statusText}`);
-    }
-
-    return response.json();
+    return handleResponse<{ status: string; document_id: string }>(response);
 }
 
 /**

@@ -28,14 +28,50 @@ app = FastAPI(
 # CORS Configuration - Allow frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:8080",
+        "http://localhost:3000",
+        "https://campus-sathi.onrender.com", # Update this with your specific Render URL if different
+        # Wildcards for subdomains provided by Render/Cloudflare if needed, but specific is safer with credentials
+        "https://*.onrender.com", 
+        "https://*.trycloudflare.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Data directory
-DATA_DIR = Path("data")
+# ... (omitted code) ...
+
+from fastapi import BackgroundTasks, Response
+
+# ... (omitted code) ...
+
+@app.get("/api/documents/status/{document_id}", tags=["Documents"])
+async def get_document_status(document_id: str, response: Response):
+    """
+    Check the processing status of a document.
+    """
+    # Disable caching for this endpoint (crucial for Cloudflare Tunnels)
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    
+    status = UPLOAD_STATUS.get(document_id)
+    
+    # If not in memory, check if it exists in VDB (persistence check)
+    if not status:
+        try:
+            vdb = get_vdb()
+            if vdb.check_processed(document_id):
+                status = "completed"
+            else:
+                status = "not_found"
+        except:
+            status = "unknown"
+            
+    return {"status": status, "document_id": document_id}
 DATA_DIR.mkdir(exist_ok=True)
 
 # ============================================
