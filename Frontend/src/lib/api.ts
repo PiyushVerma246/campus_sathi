@@ -73,6 +73,17 @@ export async function queryDocuments(request: QueryRequest): Promise<QueryRespon
 /**
  * Upload a PDF document
  */
+export interface UploadResponse {
+    document_id: string;
+    filename: string;
+    status: string;
+    chunks_created: number;
+    message: string;
+}
+
+/**
+ * Upload a PDF document
+ */
 export async function uploadDocument(file: File): Promise<UploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
@@ -85,6 +96,19 @@ export async function uploadDocument(file: File): Promise<UploadResponse> {
     if (!response.ok) {
         const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
         throw new Error(error.detail || `Upload failed: ${response.statusText}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Check document processing status
+ */
+export async function getDocumentStatus(documentId: string): Promise<{ status: string; document_id: string }> {
+    const response = await fetch(`${API_BASE_URL}/api/documents/status/${documentId}`);
+
+    if (!response.ok) {
+        throw new Error(`Failed to check status: ${response.statusText}`);
     }
 
     return response.json();

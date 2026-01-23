@@ -50,28 +50,66 @@ export const AdminDashboard = () => {
 
     setIsUploading(true);
     toast.info("Uploading Document", {
-      description: `Processing ${file.name}...`,
+      description: `Starting upload for ${file.name}...`,
     });
 
     try {
+      // 1. Initial Upload
       const response = await uploadDocument(file);
 
       if (response.status === 'already_indexed') {
         toast.warning("Document Exists", {
           description: `${file.name} was already indexed.`,
         });
+        setIsUploading(false);
       } else {
-        toast.success("Upload Complete", {
-          description: `${file.name} indexed successfully. ${response.chunks_created} chunks created.`,
+        // 2. Start Polling
+        toast.message("Processing Document", {
+          description: "This may take a moment...",
         });
-        loadDocuments();
+
+        const docId = response.document_id;
+        let attempts = 0;
+        const maxAttempts = 60; // 2 minutes approx (2s intervals)
+
+        const pollInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const { getDocumentStatus } = await import('@/lib/api');
+            const statusRes = await getDocumentStatus(docId);
+
+            if (statusRes.status === 'completed') {
+              clearInterval(pollInterval);
+              setIsUploading(false);
+              toast.success("Processing Complete", {
+                description: `${file.name} is now ready for queries.`,
+              });
+              loadDocuments();
+            } else if (statusRes.status === 'failed') {
+              clearInterval(pollInterval);
+              setIsUploading(false);
+              toast.error("Processing Failed", {
+                description: "The backend encountered an error processing the PDF.",
+              });
+            } else if (attempts >= maxAttempts) {
+              clearInterval(pollInterval);
+              setIsUploading(false);
+              toast.error("Processing Timeout", {
+                description: "Server took too long to process.",
+              });
+            }
+          } catch (err) {
+            console.error("Polling error", err);
+            // Don't stop polling on transient network errors, but maybe limit consecutive failures?
+          }
+        }, 2000);
       }
     } catch (error) {
       toast.error("Upload Failed", {
         description: error instanceof Error ? error.message : 'Failed to upload document',
       });
-    } finally {
       setIsUploading(false);
+    } finally {
       if (event.target) {
         event.target.value = '';
       }
